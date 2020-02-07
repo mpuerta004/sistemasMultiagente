@@ -11,6 +11,7 @@ public class Tablero {
 
     private static Tablero myInstance;
     private HashMap<Agente, List<Integer>> tablero;
+    private int etapa;
 
     /**
      * MÉTODOS
@@ -19,6 +20,8 @@ public class Tablero {
     private Tablero() {
         /* Esto es el contructor y esta pruvado porque solo tengo un tablero.*/
         tablero = new HashMap<>();
+        /** No se si esto se pondria aqui ????????????????????????????????????????????????????????*/
+        this.etapa = 0;
     }
 
     public static Tablero getInstance() {
@@ -34,12 +37,16 @@ public class Tablero {
 
         return Math.sqrt(
                 Math.pow(posAgente1.get(0) - posAgente2.get(0), 2) +
-                Math.pow(posAgente1.get(1) - posAgente2.get(1), 2));
+                        Math.pow(posAgente1.get(1) - posAgente2.get(1), 2));
     }
 
     public boolean añadirAgente(List<Integer> posicionTablero) {
         /* El agente siempre esta perdido en este caso, y desconoce su posicion.*/
         return añadirAgente(true, posicionTablero);
+    }
+
+    public int getEtapa() {
+        return etapa;
     }
 
     public boolean añadirAgente(boolean perdido, List<Integer> posicionTablero) {
@@ -75,7 +82,7 @@ public class Tablero {
         return listaAgentesCercanos;
     }
 
-    public List<Agente> agentesCercanosNoPerdidos(Agente agente){
+    public List<Agente> agentesCercanosNoPerdidos(Agente agente) {
         List<Agente> agentesCercanos = agentesCercanos(agente);
         List<Agente> agentesCercanosNoPerdidos = agentesCercanos.stream()
                 .filter(agenteCercano ->
@@ -85,7 +92,7 @@ public class Tablero {
 
     }
 
-    public boolean movimientoPosible(Agente agente, LinkedList<Integer> posicionDeseada){
+    public boolean movimientoPosible(Agente agente, LinkedList<Integer> posicionDeseada) {
         return false;
 
     }

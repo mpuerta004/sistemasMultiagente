@@ -92,6 +92,16 @@ public class Tablero {
 
     }
 
+    public double sensorAgente(Agente agente1, Agente agente2) {
+        /** Hacer*/
+        return 0.0;
+    }
+
+    public List<Integer> redInalambrica(Agente agente1, Agente agente2) {
+        /** Se supone que se la da y es siempre correcta, el agente1 pide y el otro se la da.*/
+        return agente2.getPosicion();
+    }
+
     public boolean movimientoPosible(Agente agente, LinkedList<Integer> posicionDeseada) {
         return false;
 

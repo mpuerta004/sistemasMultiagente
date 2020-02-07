@@ -14,7 +14,7 @@ public class Agente {
     //ALERT estos numero luego lees el paper y los pones todos bien.
     private final int distanciaMaxSensor = 5;
     private final int distanciaMaxMov = 5;
-    private final int numDePasosParaMediarLasTrilateraciones= 15;
+    private final int numDePasosParaMediarLasTrilateraciones = 15;
     private final int numTrilateracionesGuardo = 10;
 
 
@@ -32,14 +32,14 @@ public class Agente {
         posicion = null;
         perdido = true;
         this.id = id;
-        this.listaTrilateraciones = new Stack<List<Integer>>;
+        this.listaTrilateraciones = new Stack<List<Integer>>();
     }
 
     public Agente(boolean perdido, List<Integer> posicion, Integer id) {
         if (perdido) posicion = new ArrayList<>();
         this.posicion = posicion;
         this.perdido = perdido;
-        this.listaTrilateraciones = new Stack<List<Integer>>;
+        this.listaTrilateraciones = new Stack<List<Integer>>();
         this.id = id;
     }
 
@@ -51,7 +51,7 @@ public class Agente {
         return posicion;
     }
 
-    public List<Integer> getListaTrilateraciones() {
+    public Stack<List<Integer>> getListaTrilateraciones() {
         return listaTrilateraciones;
     }
 
@@ -78,34 +78,18 @@ public class Agente {
         return Objects.equals(id, agente.id);
     }
 
-    /*
-public List<Integer> calcularCoordenadasAgenteSinMovimiento(Tablero tablero) {
-    if (!this.getPerdido()) { // pasa si posicion es False, es decir no esta perdido y las coordenadas no son null
-        return this.getPosicion();
-    } else {
-        List<Agente> agentesCercanosNoPerdidos = tablero.agentesCercanosNoPerdidos(this);
-        if (agentesCercanosNoPerdidos.size() < 3) {
-            return ;
-        } else {
-            List<Agente> tresAgentesCercanos
-        }
-    }
-
-
-    }
-    */
-
     public List<Integer> primeraCoordenada(List<Agente> tresAgentesCercanosNoPerdidos) {
-        /**     HACER   */
+        /**  ALERT   HACER   */
         return this.posicion;
     }
 
     public List<Integer> trilateracion(List<Agente> tresAgentesCercanosNoPerdidos) {
-        /**     HACER   */
+        /**    ALERT HACER   */
         return this.posicion;
     }
-    public List<Integer> mediaTrilateracion(){
-        /**     HACER */
+
+    public List<Integer> mediaTrilateracion() {
+        /**   ALERT   HACER */
         return this.posicion;
     }
 
@@ -122,11 +106,16 @@ public List<Integer> calcularCoordenadasAgenteSinMovimiento(Tablero tablero) {
                 listaTrilateraciones.add(this.trilateracion(tresAgentesCercanosNoPerdidos));
                 // ALERT esto lo estas haciendo con los mismo que calculas la posicion inicial esto se podria cambiar.
             } else {
-                if (tablero.getEtapa()% numDePasosParaMediarLasTrilateraciones ==0) {
+                if (tablero.getEtapa() % numDePasosParaMediarLasTrilateraciones == 0) {
                     this.posicion = mediaTrilateracion();
                 }
                 listaTrilateraciones.add(this.trilateracion(tresAgentesCercanosNoPerdidos));
             }
         }
     }
+
+    
+
+
+
 }

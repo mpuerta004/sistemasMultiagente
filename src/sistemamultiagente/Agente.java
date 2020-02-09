@@ -1,10 +1,11 @@
 package sistemamultiagente;
 
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Stack;
+
 
 public class Agente {
 
@@ -14,15 +15,16 @@ public class Agente {
     //ALERT estos numero luego lees el paper y los pones todos bien.
     private final int distanciaMaxSensor = 5;
     private final int distanciaMaxMov = 5;
-    private final int numDePasosParaMediarLasTrilateraciones = 15;
+    private final int numDePasosParaMediarLasTrilateraciones = 10;
     private final int numTrilateracionesGuardo = 10;
+    private final int tamañoAgente=1;
 
 
     private Integer id;
     private boolean perdido;
     /* EGOO esto en muchos sera Null al principio.*/
-    private List<Integer> posicion;
-    private Stack<List<Integer>> listaTrilateraciones;
+    private Point posicion;
+    private Stack<Point> listaTrilateraciones;
 
     /**
      * MÉTODOS
@@ -32,14 +34,14 @@ public class Agente {
         posicion = null;
         perdido = true;
         this.id = id;
-        this.listaTrilateraciones = new Stack<List<Integer>>();
+        this.listaTrilateraciones = new Stack<Point>();
     }
 
-    public Agente(boolean perdido, List<Integer> posicion, Integer id) {
-        if (perdido) posicion = new ArrayList<>();
+    public Agente(boolean perdido, Point posicion, Integer id) {
+        if (perdido) posicion = null;
         this.posicion = posicion;
         this.perdido = perdido;
-        this.listaTrilateraciones = new Stack<List<Integer>>();
+        this.listaTrilateraciones = new Stack<Point>();
         this.id = id;
     }
 
@@ -47,11 +49,11 @@ public class Agente {
         return perdido;
     }
 
-    public List<Integer> getPosicion() {
+    public Point getPosicion() {
         return posicion;
     }
 
-    public Stack<List<Integer>> getListaTrilateraciones() {
+    public Stack<Point> getListaTrilateraciones() {
         return listaTrilateraciones;
     }
 
@@ -73,24 +75,59 @@ public class Agente {
         if (this == o) return true;
         /* Si el objerto o es vacio o no es dela clase objeto devuelve False*/
         if (o == null || getClass() != o.getClass()) return false;
-        /* ¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿??????????????????????? */
+        /**ALERT todo    ¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿??????????????????????? */
         Agente agente = (Agente) o;
         return Objects.equals(id, agente.id);
     }
 
-    public List<Integer> primeraCoordenada(List<Agente> tresAgentesCercanosNoPerdidos) {
-        /**  ALERT   HACER   */
+    public Point primeraCoordenada(List<Agente> tresAgentesCercanosNoPerdidos, Tablero tablero) {
+        //Sabemos que hay tres agentes cercanos no perdidos.
+
+        /** Datos que necesita para realizar este calculo*/
+        Point posAgenteCercano1 = tablero.redInalambrica(this, tresAgentesCercanosNoPerdidos.get(0));
+        Point posAgenteCercano2 = tablero.redInalambrica(this, tresAgentesCercanosNoPerdidos.get(1));
+        Point posAgenteCercano3 = tablero.redInalambrica(this, tresAgentesCercanosNoPerdidos.get(2));
+
+        double distanciaSensorAgente1 = tablero.sensorAgente(this, tresAgentesCercanosNoPerdidos.get(0));
+        double distanciaSensorAgente2 = tablero.sensorAgente(this, tresAgentesCercanosNoPerdidos.get(1));
+        double distanciaSensorAgente3 = tablero.sensorAgente(this, tresAgentesCercanosNoPerdidos.get(2));
+
+        Random r1 = new Random();
+        double radio1 = this.tamañoAgente  + (distanciaMaxSensor - tamañoAgente) * r1.nextDouble();
+        Random r2 = new Random();
+        double radio2 = this.tamañoAgente  + (distanciaMaxSensor - tamañoAgente) * r2.nextDouble();
+        Random r3 = new Random();
+        double radio3 = this.tamañoAgente  + (distanciaMaxSensor - tamañoAgente) * r.nextDouble();
+
+
+        /** Calculo */
+        try {
+            
+            solution = c1.intersection(c2);
+            System.out.printf("First intersection in %s %n", solution.getKey().toString());
+            System.out.printf("Second intersection in %s %n", solution.getValue().toString());
+        } catch (ArithmeticException e) {
+            System.out.println(e.getMessage());
+        }
+
+        /** ALERT todo */
+
         return this.posicion;
     }
 
-    public List<Integer> trilateracion(List<Agente> tresAgentesCercanosNoPerdidos) {
-        /**    ALERT HACER   */
+    public Point trilateracion(List<Agente> tresAgentesCercanosNoPerdidos) {
+        /**    ALERT todo  */
+
+
         return this.posicion;
     }
 
-    public List<Integer> mediaTrilateracion() {
-        /**   ALERT   HACER */
-        return this.posicion;
+    public Point mediaTrilateracion(){
+/**        if (listaTrilateraciones.size()>= numTrilateracionesGuardo) {
+
+        }else{ */
+            return this.posicion;
+   //     }
     }
 
     public void consensoDeCoordenadas(Tablero tablero) {
@@ -101,7 +138,7 @@ public class Agente {
             if (this.perdido) {
                 // si esta perdido, entonces calcula la primera coordena
                 /** ALET No se si ahi tiene que haber un this o no ???????????????????????????????????????????????*/
-                this.posicion = this.primeraCoordenada(tresAgentesCercanosNoPerdidos);
+                this.posicion = this.primeraCoordenada(tresAgentesCercanosNoPerdidos, tablero);
                 this.posicion = this.trilateracion(tresAgentesCercanosNoPerdidos);
                 listaTrilateraciones.add(this.trilateracion(tresAgentesCercanosNoPerdidos));
                 // ALERT esto lo estas haciendo con los mismo que calculas la posicion inicial esto se podria cambiar.
@@ -113,9 +150,6 @@ public class Agente {
             }
         }
     }
-
-    
-
 
 
 }

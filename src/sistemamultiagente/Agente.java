@@ -72,14 +72,13 @@ public class Agente {
         if (this == o) return true;
         /* Si el objerto o es vacio o no es dela clase objeto devuelve False*/
         if (o == null || getClass() != o.getClass()) return false;
-        /**ALERT   ¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿??????????????????????? */
+        /**ALERT   ¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿?????????????????????????????????????????????????????????????????????????? */
         Agente agente = (Agente) o;
         return Objects.equals(id, agente.id);
     }
 
     public Point primeraCoordenada(List<Agente> tresAgentesCercanosNoPerdidos, Tablero tablero) {
         //Sabemos que hay tres agentes cercanos no perdidos.
-
         /** Datos que necesita para realizar este calculo*/
         Point posAgenteCercano1 = tablero.redInalambrica(this, tresAgentesCercanosNoPerdidos.get(0));
         Point posAgenteCercano2 = tablero.redInalambrica(this, tresAgentesCercanosNoPerdidos.get(1));
@@ -124,6 +123,7 @@ public class Agente {
 
             }
         }
+        /** ALERT EGO ??????????????????????????????????????????????????????????????????????????????????????????????*/
         return null;
     }
 
@@ -134,30 +134,28 @@ public class Agente {
         double distanciaSensorAgente3 = tablero.sensorAgente(this, tresAgentesCercanosNoPerdidos.get(2));
         /**    ALERT todo  */
 
-
         return this.posicion;
     }
 
     public Point mediaTrilateracion() {
-/**        if (listaTrilateraciones.size()>= numTrilateracionesGuardo) {
+        /** ALEET todo */
 
- }else{ */
         return this.posicion;
-        //     }
     }
 
     public void consensoDeCoordenadas(Tablero tablero) {
         List<Agente> agentesCercanosNoPerdidos = tablero.agentesCercanosNoPerdidos(this);
         if (agentesCercanosNoPerdidos.size() > 3) {
-            /**ALET  PARA que no los de siempre en el mismo orden esto lo hace porque utilice stream ?????????????*/
+            /**ALET  PARA que no los de siempre en el mismo orden esto lo hace porque utilice stream ????????????????*/
             List<Agente> tresAgentesCercanosNoPerdidos = agentesCercanosNoPerdidos.subList(0, 3);
             if (this.perdido) {
                 // si esta perdido, entonces calcula la primera coordena
-                /** ALET No se si ahi tiene que haber un this o no ???????????????????????????????????????????????*/
+                /** ALET No se si ahi tiene que haber un this o no ??????????????????????????????????????????????????*/
                 this.posicion = this.primeraCoordenada(tresAgentesCercanosNoPerdidos, tablero);
                 this.posicion = this.trilateracion(tresAgentesCercanosNoPerdidos, tablero);
                 listaTrilateraciones.add(this.trilateracion(tresAgentesCercanosNoPerdidos, tablero));
-                // ALERT esto lo estas haciendo con los mismo que calculas la posicion inicial esto se podria cambiar.
+                // ALERT esto lo estas haciendo con los mismos agentes que calculas la posicion inicial esto se podria
+                // cambiar.
             } else {
                 if (tablero.getEtapa() % numDePasosParaMediarLasTrilateraciones == 0) {
                     this.posicion = mediaTrilateracion();

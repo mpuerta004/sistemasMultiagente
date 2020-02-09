@@ -24,7 +24,7 @@ public class Point {
         return Math.sqrt((x - other.x) * (x - other.x) + (y - other.y) * (y - other.y));
     }
 
-    public Point sub(Point other) {
+    public Point sub(Vector other) {
         return new Point(x - other.x, y - other.y);
     }
 
@@ -32,7 +32,7 @@ public class Point {
         return new Point(x * s, y * s);
     }
 
-    public Point add(Point p2) {
+    public Point add(Vector p2) {
         return new Point(x + p2.x, y + p2.y);
     }
 

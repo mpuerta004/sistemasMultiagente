@@ -21,7 +21,10 @@ public class Line {
         this.punto2=punto2;
     }
 
-
+    public Point interseccion(Line l2){
+        /** ALERT todo */
+        return new Point(0.0,0.0);
+    }
 
 
 }

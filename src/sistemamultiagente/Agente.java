@@ -202,8 +202,8 @@ public class Agente {
             }
 
             return new Point(sumX / numTrilateracionesGuardo, sumY / numTrilateracionesGuardo);
-        }}
-
+        }
+    }
 
     public void consensoDeCoordenadas(Tablero tablero) {
         List<Agente> agentesCercanosNoPerdidos = tablero.agentesCercanosNoPerdidos(this);

@@ -42,11 +42,11 @@ public class Circle {
         //https://stackoverflow.com/questions/3349125/circle-circle-intersection-points/60130568#60130568
         double a = (radio * radio - other.radio * other.radio + d * d) / (2 * d);
         double h = Math.sqrt(radio * radio - a * a);
-        Point P2 = other.center.sub(this.center).scale(a / d).add(this.center);
-        double x3 = P2.x + h * (other.center.y - this.center.y) / d;
-        double y3 = P2.y - h * (other.center.x - this.center.x) / d;
-        double x4 = P2.x - h * (other.center.y - this.center.y) / d;
-        double y4 = P2.y + h * (other.center.x - this.center.x) / d;
+        Point P2 = other.center.sub(this.getCenter()).scale(a / d).add(this.center);
+        double x3 = P2.getX() + h * (other.center.getY() - this.center.getY()) / d;
+        double y3 = P2.getY() - h * (other.center.getX() - this.center.getX()) / d;
+        double x4 = P2.getX() - h * (other.center.getY() - this.center.getY()) / d;
+        double y4 = P2.getY() + h * (other.center.getX() - this.center.getX()) / d;
 
         return Arrays.asList(new Point(x3, y3), new Point(x4, y4));
     }

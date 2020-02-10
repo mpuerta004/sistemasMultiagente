@@ -2,12 +2,16 @@ package sistemamultiagente;
 
 public class Vector {
 
-    /**         Atributos       */
-    public double x;
-    public double y;
+    /**
+     *      Atributos
+     */
+    private double x;
+    private double y;
 
-    /**         Métodos         */
-    public Vector (double x, double y) {
+    /**
+     *          Métodos
+     */
+    public Vector(double x, double y) {
         this.x = x;
         this.y = y;
     }

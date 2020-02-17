@@ -14,6 +14,8 @@ public class Tablero {
     private static Tablero myInstance;
     private HashMap<Agente, Point> tablero;
     private int etapa;
+    private final int ejeYmaximo= 13;
+    private final int ejeXMaximo = 13;
 
     /**
      * MÉTODOS

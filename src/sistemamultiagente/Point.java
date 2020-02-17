@@ -24,7 +24,9 @@ public class Point {
         return Math.sqrt((this.getX() - other.getX()) * (this.getX() - other.getX()) + (this.getY() - other.getY()) * (this.getY() - other.getY()));
     }
 
-
+    public Point div(double s){
+        return new Point(this.getX() / s, this.getY()/s);
+    }
     public Point sub(Point other) {
         return new Point(this.getX() - other.getX(), this.getY() - other.getY());
     }

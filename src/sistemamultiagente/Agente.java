@@ -10,11 +10,12 @@ public class Agente {
      * ATRIBUTOS
      */
     //ALERT estos numero luego lees el paper y los pones todos bien.
-    private final int distanciaMaxSensor = 5;
+    private final Integer distanciaMaxSensor = 5;
     private final int distanciaMaxMov = 5;
     private final int numDePasosParaMediarLasTrilateraciones = 10;
     private final int numTrilateracionesGuardo = 10;
     private final int tamañoAgente = 1;
+    private final int radioDeRepulsion = 5;
 
 
     private Integer id;
@@ -22,6 +23,7 @@ public class Agente {
     /* EGOO esto en muchos sera Null al principio.*/
     private Point posicion;
     private Stack<Point> listaTrilateraciones;
+    private Vector vectorMovimiento;
 
     /**
      * MÉTODOS
@@ -31,6 +33,7 @@ public class Agente {
         posicion = null;
         perdido = true;
         this.id = id;
+        this.vectorMovimiento = new Vector(0.0, 0.0);
         this.listaTrilateraciones = new Stack<Point>();
     }
 
@@ -39,6 +42,7 @@ public class Agente {
         this.posicion = posicion;
         this.perdido = perdido;
         this.listaTrilateraciones = new Stack<Point>();
+        this.vectorMovimiento = new Vector(0.0, 0.0);
         this.id = id;
     }
 
@@ -172,7 +176,6 @@ public class Agente {
         return gradientDescent(this.posicion, solTrilateracion);
     }
 
-
     public Point gradientDescent(Point posicionAgente, Point soltrilateraciones) {
         boolean iterar = true;
         double beta = 0.9;
@@ -180,7 +183,8 @@ public class Agente {
         while (iterar) {
             Line l1 = new Line(posicionAgente, soltrilateraciones);
             double triangulo = l1.getDireccion().getY() / l1.getDireccion().getX();
-            Point nuevo = new Point(soltrilateraciones.getX() - beta * triangulo * soltrilateraciones.getX(), soltrilateraciones.getY() - beta * triangulo * soltrilateraciones.getY());
+            Point nuevo = new Point(soltrilateraciones.getX() - beta * triangulo * soltrilateraciones.getX(),
+                    soltrilateraciones.getY() - beta * triangulo * soltrilateraciones.getY());
             posicionAgente = soltrilateraciones;
             soltrilateraciones = nuevo;
             if (nuevo.distance(posicionAgente) < this.tamañoAgente || triangulo < 0.001) iterar = false;
@@ -200,7 +204,6 @@ public class Agente {
                 sumX += nuevo.getX();
                 sumY += nuevo.getY();
             }
-
             return new Point(sumX / numTrilateracionesGuardo, sumY / numTrilateracionesGuardo);
         }
     }
@@ -226,5 +229,53 @@ public class Agente {
                 listaTrilateraciones.push(this.trilateracion(tresAgentesCercanosNoPerdidos, tablero));
             }
         }
+
+
     }
+
+    public Vector movFuera() {
+        /* Va hacia una direccion aleatoria.
+         * ALERT no son int asik aqui  no se estan viendo como casillas. */
+        double ejeX = this.getDistanciaMaxMov() * Math.random();
+        double ejeY = this.getDistanciaMaxMov() * Math.random();
+        Vector vector = new Vector(ejeX, ejeY);
+        return vector;
+    }
+
+    /**
+     *          METODOS DE MOVIMIENTO.
+     */
+
+    public Vector movDentro(Tablero tablero) {
+        List agentesCerca = tablero.agentesCercanosNoPerdidos(this);
+        Point solucion = new Point(0.0, 0.0);
+        /* Ten cuidado que aqui dentro juegas con poiont porque las posiciones son puntos
+        * pero bueno tu quieres un vector. ten cuidado. */
+        Iterator<Agente> iterator = agentesCerca.iterator();
+        while (iterator.hasNext()) {
+            Agente agenteI = iterator.next();
+            double distanciaAgente = tablero.sensorAgente(this, agenteI);
+            Point vector = this.posicion.sub(agenteI.getPosicion());
+            Point vectorI = vector.div(distanciaAgente);
+            Point vectorII = vectorI.scale(radioDeRepulsion - distanciaAgente);
+            solucion = solucion.add(vectorII);
+        }
+        return new Vector(solucion.getX(), solucion.getY());
+    }
+
+    public void movimeinto(Tablero tablero, Figura figura) {
+        /* aqui solo calculo lo que se debe mover pero no actualizo la situacion,
+         * CUIDADO. */
+        if (this.perdido) {
+            this.vectorMovimiento = movFuera();
+        } else {
+            if (figura.dentroFuera(this)) {
+                this.vectorMovimiento = movDentro(tablero);
+            } else {
+                this.vectorMovimiento = movFuera();
+            }
+        }
+
+    }
+
 }

@@ -50,4 +50,18 @@ public class Circle {
 
         return Arrays.asList(new Point(x3, y3), new Point(x4, y4));
     }
+
+
+    public boolean isDentro(Point point) {
+        Boolean dentro;
+        double distancia = this.center.distance(point);
+        if ( distancia <= this.radio) {
+            dentro = true;
+        } else {
+            dentro = false;
+        }
+        return dentro;
+    }
+
+
 }

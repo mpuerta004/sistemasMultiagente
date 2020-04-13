@@ -1,26 +1,25 @@
 package sistemamultiagente;
 
-import java.util.List;
-
 public class Figura {
 
     /**
      * Atributos
      */
 
-    private List<Point> figura;
+    private final double radio = 5.0;
+    private final Point center = new Point(6.5, 6.5);
+    private final Circle figura;
 
     /**
      * Métodos
      */
 
-    public Figura(List lista){
-        figura = lista;
+    public Figura() {
+        figura = new Circle(center, radio);
     }
 
-    public boolean dentroFuera(Agente agente){
-        return figura.contains(agente.getPosicion());
+    public boolean isDentro(Point point) {
+        return figura.isDentro(point);
     }
-
 
 }

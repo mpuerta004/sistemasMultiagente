@@ -14,8 +14,8 @@ public class Tablero {
     private static Tablero myInstance;
     private HashMap<Agente, Point> tablero;
     private int etapa;
-    private final double ejeYmaximo = 13.0;
-    private final double ejeXMaximo = 13.0;
+    private final double ejeYmaximo = 10.0;
+    private final double ejeXMaximo = 10.0;
 
     /**
      * MÉTODOS
@@ -69,10 +69,21 @@ public class Tablero {
 
         } else {
             // sino esta perdido los creamos en una zona concentrica.
-            posicionX=5 + Math.random() * 3;
-            posicionY=5 + Math.random() * 3;
+            double masMenos = Math.random();
+            if ((masMenos) < 0.5) {
+                posicionX = this.getEjeXMaximo() / 2 + Math.random() * (this.ejeYmaximo / 3) / 2;
+            } else {
+                posicionX = this.getEjeXMaximo() / 2 - Math.random() * (this.ejeYmaximo / 3) / 2;
+            }
+            double masMenos2 = Math.random();
+            if ((masMenos2) < 0.5) {
+                posicionY = this.getEjeXMaximo() / 2 + (Math.random() * (this.ejeYmaximo / 3) / 2);
+            } else {
+
+                posicionY = this.getEjeYmaximo() / 2 - Math.random() * ((this.ejeYmaximo / 3) / 2);
+            }
         }
-        Point punto = new Point(posicionX,posicionY);
+        Point punto = new Point(posicionX, posicionY);
         return punto;
     }
 
@@ -82,23 +93,13 @@ public class Tablero {
 
         int idAgente = tablero.size();
         Point punto1 = primeraCoordenadaAgenteTablero(perdido);
-        Boolean noSePuedeMeterNecesitoOtroPunto = true;
-        Agente agente = new Agente(perdido, punto1, idAgente);
-        tablero.put(agente, punto1);
-        while (noSePuedeMeterNecesitoOtroPunto) {
+        while (conflictos(punto1)) {
             System.out.println("No puedo meter ese agente en esa posicion");
             System.out.println(punto1.toString());
-            if (conflictos(agente)) {
-                tablero.remove(agente);
-                punto1 = primeraCoordenadaAgenteTablero(perdido);
-                agente = new Agente(perdido, punto1, idAgente);
-                tablero.put(agente, punto1);
-            } else {
-                noSePuedeMeterNecesitoOtroPunto = false;
-
-
-            }
+            punto1 = primeraCoordenadaAgenteTablero(perdido);
         }
+        Agente agente = new Agente(perdido, punto1, idAgente);
+        tablero.put(agente, punto1);
         // aqui se le mete posicionTablero pero si perdido =false entonces el agente no tiene acceso a su posicion.
     }
 
@@ -106,10 +107,9 @@ public class Tablero {
         this.etapa = this.etapa + 1;
     }
 
-    public boolean conflictos(Agente agente) {
+    public boolean conflictos(Point point) {
         Optional<Agente> agenteConflicto = tablero.keySet().stream()
-                .filter(agenteTablero -> tablero.get(agenteTablero).distance(tablero.get(agente)) <= agenteTablero.getTamañoAgente() &&
-                        !agente.equals(agenteTablero))
+                .filter(agenteTablero -> tablero.get(agenteTablero).distance(point) <= agenteTablero.getTamañoAgente())
                 .findAny();
         return agenteConflicto.isPresent();
     }
@@ -166,48 +166,46 @@ public class Tablero {
 
         /** ALERT se puede quedar en un bucle infinito  si la posicion siempre sale la misma */
         Point nuevaPosicion = posicionModeloTablero(tablero.get(agente).add(agente.getVectorMovimiento()));
+        tablero.put(agente, nuevaPosicion);
 
-        tablero.replace(agente, nuevaPosicion);
-
-        while (conflictos(agente)) {
+        /*while (conflictos(agente)) {
 
             System.out.println("Conflicto agente :" + tablero.get(agente) + ",  Etapa: " + getEtapa() + "  id del agente " + agente.getId());
             agente.movimiento();
             nuevaPosicion = posicionModeloTablero(tablero.get(agente).add(agente.getVectorMovimiento()));
             tablero.replace(agente, nuevaPosicion);
-        }
-        // si el agente se sale por el tablero por un lado regresara por el contrario.
-        if (!agente.getPerdido()) {
-            agente.actualizarPosicion();
-        }
+        }*/
+        // si el agente se sale por el tablero por un lado regresara por el contrario
+        agente.actualizarPosicion();
     }
 
     public Point posicionModeloTablero(Point nuevaPosicion) {
         double posicionX = nuevaPosicion.getX();
         double posicionY = nuevaPosicion.getY();
         if (!this.isDentro(nuevaPosicion)) {
-            if (posicionX < 0.0) {
+            while (posicionX < 0.0) {
                 posicionX = this.ejeXMaximo + posicionX;
             }
-            if (posicionX > this.ejeXMaximo) {
+            while (posicionX > this.ejeXMaximo) {
                 posicionX = posicionX - this.ejeXMaximo;
             }
-            if (posicionY < 0.0) {
+            while (posicionY < 0.0) {
                 posicionY = this.ejeYmaximo + posicionY;
             }
-            if (posicionY > this.ejeYmaximo) {
+            while (posicionY > this.ejeYmaximo) {
                 posicionY = posicionY - this.ejeYmaximo;
             }
-
+            nuevaPosicion = new Point(posicionX, posicionY);
         }
-        return new Point(posicionX, posicionY);
+        return nuevaPosicion;
     }
 
     public boolean isDentro(Point point) {
         Boolean isDentro;
         double posicionX = point.getX();
         double posicionY = point.getY();
-        if (0.0 <= posicionX || posicionX <= this.ejeXMaximo || 0.0 <= posicionY || posicionY <= this.ejeYmaximo) {
+
+        if (0.0 <= posicionX && posicionX <= this.ejeXMaximo && 0.0 <= posicionY && posicionY <= this.ejeYmaximo) {
             isDentro = true;
         } else {
             isDentro = false;

@@ -1,6 +1,5 @@
 package sistemamultiagente;
 
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -12,12 +11,14 @@ public class Agente {
      */
 
     //ALERT Estos numero luego lees el paper y los pones todos bien.
-    private final double distanciaMaxSensor = 2.0;
-    private final double distanciaMaxMov = 2.0;
+    private final double distanciaMaxSensor = 1.5;
+    private final double distanciaMaxMov = 1.5;
     private final int numDePasosParaMediarLasTrilateraciones = 10;
     private final int numTrilateracionesGuardo = 10;
     private final double tamañoAgente = 0.5;
-    private final double radioDeRepulsion = 5.0;
+    private final double radioDeRepulsion = 1.0;
+
+
     private final Figura figura = new Figura();
 
     private Integer id;
@@ -30,6 +31,7 @@ public class Agente {
      * MÉTODOS
      */
 
+    //Constructor --- Para crear a un nuevo agente que esta perdido.
     public Agente(Integer id) {
         posicion = null;
         perdido = true;
@@ -71,6 +73,10 @@ public class Agente {
         return perdido;
     }
 
+    public Figura getFigura() {
+        return figura;
+    }
+
     public Point getPosicion() {
         return posicion;
     }
@@ -105,81 +111,82 @@ public class Agente {
     public Point primeraCoordenada(List<Agente> tresAgentesCercanosNoPerdidos) {
         //Sabemos que hay tres agentes cercanos no perdidos.
         /** Datos que necesita para realizar este calculo*/
-        /**
 
-        List<Point> posiciones = new ArrayList();
-        posiciones.add(Tablero.getInstance().redInalambrica(tresAgentesCercanosNoPerdidos.get(0)));
-        posiciones.add(Tablero.getInstance().redInalambrica(tresAgentesCercanosNoPerdidos.get(1)));
-        posiciones.add(Tablero.getInstance().redInalambrica(tresAgentesCercanosNoPerdidos.get(2)));
-        double distancia1a2;
-        double distancia1a3;
-        double distancia2a3;
-        Point posAgenteCercano1;
-        Point posAgenteCercano2;
-        Point posAgenteCercano3;
-        posAgenteCercano1 = posiciones.stream().sorted(Comparator.comparingDouble(a -> a.getX())).collect(Collectors.toList()).get(1);
-        posAgenteCercano2 = posiciones.stream().sorted(Comparator.comparingDouble(a -> a.getX())).collect(Collectors.toList()).get(0);
-        posAgenteCercano3 = posiciones.stream().sorted(Comparator.comparingDouble(a -> a.getX())).collect(Collectors.toList()).get(2);
-        distancia1a2 = posAgenteCercano1.distance(posAgenteCercano2);
-        distancia1a3 = posAgenteCercano1.distance(posAgenteCercano3);
-        distancia2a3 = posAgenteCercano2.distance(posAgenteCercano3);
-        boolean intentar = true;
-        int iterador = 0;
-        List<Point> listaIntersecciones = null;
-
-        while (intentar) {
-            try {
-                iterador++;
-                //System.out.println("Intento el try");
-                //System.out.println(posAgenteCercano1 + "  "+ posAgenteCercano2 +" " + posAgenteCercano3);
-                //System.out.println("distancia de 1 a 2 " + distancia1a2 + " distancia de 1 a 3 "+ distancia1a3 +"  distancia de 1 a 3 "+ distancia1a3);
-                double radio2 = distancia1a2 / 2 + distancia1a2 / 2 * Math.random();
-                double radio3 = distancia1a3 / 2 + distancia1a3 / 2 * Math.random();
-                double CotaMinima = Math.max(distancia1a2 + radio2, distancia1a3 + radio3);
-                double radioMaximo = Math.max(radio2, radio3);
-                double radio1 = CotaMinima + radioMaximo * Math.random();
-
-                Circle c1 = new Circle(posAgenteCercano1, radio1);
-
-                Circle c2 = new Circle(posAgenteCercano2, radio2);
+//        List<Point> posiciones = new ArrayList();
+//        posiciones.add(Tablero.getInstance().redInalambrica(tresAgentesCercanosNoPerdidos.get(0)));
+//        posiciones.add(Tablero.getInstance().redInalambrica(tresAgentesCercanosNoPerdidos.get(1)));
+//        posiciones.add(Tablero.getInstance().redInalambrica(tresAgentesCercanosNoPerdidos.get(2)));
+//        Point posAgenteCercano1;
+//        Point posAgenteCercano2;
+//        Point posAgenteCercano3;
+//        posAgenteCercano1 = posiciones.stream().sorted(Comparator.comparingDouble(a -> a.getX())).collect(Collectors.toList()).get(1);
+//        posAgenteCercano2 = posiciones.stream().sorted(Comparator.comparingDouble(a -> a.getX())).collect(Collectors.toList()).get(0);
+//        posAgenteCercano3 = posiciones.stream().sorted(Comparator.comparingDouble(a -> a.getX())).collect(Collectors.toList()).get(2);
 
 
-                Circle c3 = new Circle(posAgenteCercano3, radio3);
+        Point punto = new Point(tresAgentesCercanosNoPerdidos.stream().mapToDouble(a->a.getPosicion().getX()).sum()/3,
+                tresAgentesCercanosNoPerdidos.stream().mapToDouble(a->a.getPosicion().getY()).sum()/3);
+
+        /**       distancia1a2 = posAgenteCercano1.distance(posAgenteCercano2);
+         distancia1a3 = posAgenteCercano1.distance(posAgenteCercano3);
+         distancia2a3 = posAgenteCercano2.distance(posAgenteCercano3);
+         boolean intentar = true;
+         int iterador = 0;
+         List<Point> listaIntersecciones = null;
+
+         while (intentar) {
+         try {
+         iterador++;
+         //System.out.println("Intento el try");
+         //System.out.println(posAgenteCercano1 + "  "+ posAgenteCercano2 +" " + posAgenteCercano3);
+         //System.out.println("distancia de 1 a 2 " + distancia1a2 + " distancia de 1 a 3 "+ distancia1a3 +"  distancia de 1 a 3 "+ distancia1a3);
+         double radio2 = distancia1a2 / 2 + distancia1a2 / 2 * Math.random();
+         double radio3 = distancia1a3 / 2 + distancia1a3 / 2 * Math.random();
+         double CotaMinima = Math.max(distancia1a2 + radio2, distancia1a3 + radio3);
+         double radioMaximo = Math.max(radio2, radio3);
+         double radio1 = CotaMinima + radioMaximo * Math.random();
+
+         Circle c1 = new Circle(posAgenteCercano1, radio1);
+
+         Circle c2 = new Circle(posAgenteCercano2, radio2);
 
 
-                listaIntersecciones = new ArrayList<>();
-                // Si en alguno no son dospuntos saldra un nuevo
-                listaIntersecciones.addAll(c1.intersection(c2));
-                //System.out.println("CONSEGUIDO 1");
-
-                listaIntersecciones.addAll(c1.intersection(c3));
-                //System.out.println("CONSEGUIDO 2");
-                //listaIntersecciones.addAll(c2.intersection(c3));
-                //System.out.println("CONSEGUIDO 3");
-                intentar = false;
+         Circle c3 = new Circle(posAgenteCercano3, radio3);
 
 
-            } catch (ArithmeticException e) {
-                intentar = true;
-                System.out.println("Los tres radios no se intersecan");
-                if (iterador>50){intentar=false; return null;}
+         listaIntersecciones = new ArrayList<>();
+         // Si en alguno no son dospuntos saldra un nuevo
+         listaIntersecciones.addAll(c1.intersection(c2));
+         //System.out.println("CONSEGUIDO 1");
 
-            }
-        }
+         listaIntersecciones.addAll(c1.intersection(c3));
+         //System.out.println("CONSEGUIDO 2");
+         //listaIntersecciones.addAll(c2.intersection(c3));
+         //System.out.println("CONSEGUIDO 3");
+         intentar = false;
 
-        Line l1 = new Line(listaIntersecciones.get(0), listaIntersecciones.get(1));
-        Line l2 = new Line(listaIntersecciones.get(2), listaIntersecciones.get(3));
-        Point puntoInterseccion = l1.interseccion(l2);
-        double distanciaAlPrimero = puntoInterseccion.distance(listaIntersecciones.get(0));
-        double distanciaAlSegundo = puntoInterseccion.distance(listaIntersecciones.get(1));
-        if (distanciaAlPrimero > distanciaAlSegundo) {
-            return listaIntersecciones.get(0);
-        } else {
-            return listaIntersecciones.get(1);
-        }
 
-        /**return posAgenteCercano1;*/
-        return Tablero.getInstance().redInalambrica(tresAgentesCercanosNoPerdidos.get(0));
+         } catch (ArithmeticException e) {
+         intentar = true;
+         System.out.println("Los tres radios no se intersecan");
+         if (iterador>50){intentar=false; return null;}
+
+         }
+         }
+
+         Line l1 = new Line(listaIntersecciones.get(0), listaIntersecciones.get(1));
+         Line l2 = new Line(listaIntersecciones.get(2), listaIntersecciones.get(3));
+         Point puntoInterseccion = l1.interseccion(l2);
+         double distanciaAlPrimero = puntoInterseccion.distance(listaIntersecciones.get(0));
+         double distanciaAlSegundo = puntoInterseccion.distance(listaIntersecciones.get(1));
+         if (distanciaAlPrimero > distanciaAlSegundo) {
+         return listaIntersecciones.get(0);
+         } else {
+         return listaIntersecciones.get(1);
+         }
+         */
+        return punto;
+        //return Tablero.getInstance().redInalambrica(tresAgentesCercanosNoPerdidos.get(0));
     }
 
 
@@ -227,7 +234,7 @@ public class Agente {
         return gradientDescent(this.posicion, solTrilateracion);
     }
 
-    public Point gradientDescent(Point posicionAgente, Point soltrilateraciones) {
+    public Point gradientDescent(Point posicionAgente, Point solTrilateraciones) {
         //System.out.println("DESCESNSO DEL GRADIENTE");
         boolean iterar = true;
         double beta = 0.9;
@@ -235,20 +242,20 @@ public class Agente {
         // CUIDado NO SE SI PUEDE DAR Fallos
         while (iterar && i < 20) {
 
-            Line l1 = new Line(posicionAgente, soltrilateraciones);
+            Line l1 = new Line(posicionAgente, solTrilateraciones);
             //pendiente
             double triangulo = l1.getDireccion().getY() / l1.getDireccion().getX();
 
-            Point nuevo = new Point(soltrilateraciones.getX() - beta * triangulo * soltrilateraciones.getX(),
-                    soltrilateraciones.getY() - beta * triangulo * soltrilateraciones.getY());
-            posicionAgente = soltrilateraciones;
-            soltrilateraciones = nuevo;
+            Point nuevo = new Point(solTrilateraciones.getX() - beta * triangulo * solTrilateraciones.getX(),
+                    solTrilateraciones.getY() - beta * triangulo * solTrilateraciones.getY());
+            posicionAgente = solTrilateraciones;
+            solTrilateraciones = nuevo;
             i++;
             // condiciones, si la distancia entre lso putnos es manor que el tamaño del agente o la pendiente ya es enanisima.
-            if (soltrilateraciones.distance(posicionAgente) < this.tamañoAgente || triangulo < 0.1) iterar = false;
+            if (solTrilateraciones.distance(posicionAgente) < this.tamañoAgente || triangulo < 0.1) iterar = false;
         }
         //System.out.println("He salido del descenso del gradiente");
-        return soltrilateraciones;
+        return solTrilateraciones;
     }
 
     public Point mediaTrilateracion() {
@@ -293,16 +300,16 @@ public class Agente {
     public void consensoDeCoordenadas() {
 
         List<Agente> agentesCercanosNoPerdidos = Tablero.getInstance().agentesCercanosNoPerdidos(this);
-        List<Agente> copiaAgentesCercanosNoPerdidos= Tablero.getInstance().agentesCercanosNoPerdidos(this);
+        List<Agente> copiaAgentesCercanosNoPerdidos = Tablero.getInstance().agentesCercanosNoPerdidos(this);
         // Quiero quedarme con tres de ellos que sean aleatorios.
 
-        if (agentesCercanosNoPerdidos.size() > 3) {
+        if (agentesCercanosNoPerdidos.size() >= 3) {
             List<Agente> tresAgentesCercanosNoPerdidos = tresAgentesDeUnaLista(agentesCercanosNoPerdidos);
             if (this.perdido) {
                 // si esta perdido, entonces calcula la primera coordena
                 //System.out.println("CAso: estoy perdido y voy a calcular las coordenadas.");
                 this.posicion = this.primeraCoordenada(tresAgentesCercanosNoPerdidos);
-                if (this.posicion==null){
+                if (this.posicion == null) {
                     tresAgentesCercanosNoPerdidos = tresAgentesDeUnaLista(copiaAgentesCercanosNoPerdidos);
                     this.posicion = this.primeraCoordenada(tresAgentesCercanosNoPerdidos);
                 }
@@ -311,21 +318,22 @@ public class Agente {
                 //mirar si esto esta bien.
 
 
-                if (this.posicion != null) {
-
-                    this.perdido = false;
-                    this.posicion = this.trilateracion(tresAgentesCercanosNoPerdidos);
-
-
-                listaTrilateraciones.push(this.trilateracion(tresAgentesCercanosNoPerdidos));}
+//                if (this.posicion != null) {
+//
+//                    this.perdido = false;
+//                    this.posicion = this.trilateracion(tresAgentesCercanosNoPerdidos);
+//
+//
+//                    listaTrilateraciones.push(this.trilateracion(tresAgentesCercanosNoPerdidos));
+//                }
                 //System.out.println("he acabado los calculos de este caso ");
             } else {
-                this.perdido = false;
+                //this.perdido = false;
                 //System.out.println("Si no estaba perdido ");
-                if (Tablero.getInstance().getEtapa() % numDePasosParaMediarLasTrilateraciones == 0) {
-                    this.posicion = mediaTrilateracion();
-                }
-                listaTrilateraciones.push(this.trilateracion(tresAgentesCercanosNoPerdidos));
+//                if (Tablero.getInstance().getEtapa() % numDePasosParaMediarLasTrilateraciones == 0) {
+//                    this.posicion = mediaTrilateracion();
+//                }
+//                listaTrilateraciones.push(this.trilateracion(tresAgentesCercanosNoPerdidos));
                 //System.out.println("he acabado los calculos de este caso ");
             }
         }
@@ -380,7 +388,7 @@ public class Agente {
         Vector vector = new Vector(solucion.getX(), solucion.getY());
         // si se va a salir queremos que con una probabilidad muy alta se quede quiete o se mueva aleatoriamente dentro
         //de la figura.
-        if (figura.isDentro(this.posicion.add(vector))) {
+        if (this.figura.isDentroFigura(this.posicion.add(vector))) {
             double r;
             r = Math.random();
             if (r > 0.75) {
@@ -389,7 +397,7 @@ public class Agente {
                 Boolean movimientoNoPosible = true;
                 while (movimientoNoPosible) {
                     vector = movFuera();
-                    if (figura.isDentro(this.posicion.add(vector))) ;
+                    if (this.figura.isDentroFigura(this.posicion.add(vector))) ;
                     {
                         movimientoNoPosible = false;
                     }
@@ -406,21 +414,24 @@ public class Agente {
         if (this.perdido) {
             this.vectorMovimiento = this.movFuera();
         } else {
-            if (figura.isDentro(this.posicion)) {
+            if (this.figura.isDentroFigura(this.posicion)) {
                 this.vectorMovimiento = this.movDentro();
             } else {
                 this.vectorMovimiento = this.movFuera();
             }
         }
+
     }
 
     public void actualizarPosicion() {
-        Point posicionNueva = posicionModulo(this.posicion.add(this.vectorMovimiento));
-        // si el agente se sale por el tablero por un lado regresara por el contrario.
+        if (this.posicion != null) {
+            this.posicion = this.posicion.add(this.vectorMovimiento);
 
-        this.posicion = posicionNueva;
+            Point posicionNueva = Tablero.getInstance().posicionModeloTablero(this.posicion);
+            // si el agente se sale por el tablero por un lado regresara por el contrario.
+            this.posicion = posicionNueva;
+        }
         /** ALERT Tendras que hacerlo con el error en la version final*/
-        this.vectorMovimiento = new Vector(0.0, 0.0);
     }
 
     public Point posicionModulo(Point posicionNueva) {
@@ -447,11 +458,13 @@ public class Agente {
         return new Point(posicionX, posicionY);
     }
 
-    public boolean isDentroFigura(){
-        if (this.getPosicion()==null){return false;}
-        if(this.figura.isDentro(this.getPosicion())){
+    public boolean isDentroFigura() {
+        if (this.getPosicion() == null) {
+            return false;
+        }
+        if (this.getFigura().isDentroFigura(this.getPosicion())) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }

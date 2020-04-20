@@ -18,7 +18,7 @@ public class Figura {
         figura = new Circle(center, radio);
     }
 
-    public boolean isDentro(Point point) {
+    public boolean isDentroFigura(Point point) {
         return figura.isDentro(point);
     }
 

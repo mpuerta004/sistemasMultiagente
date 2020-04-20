@@ -54,8 +54,8 @@ public class Circle {
 
     public boolean isDentro(Point point) {
         Boolean dentro;
-        double distancia = this.center.distance(point);
-        if ( distancia <= this.radio) {
+        double distancia = point.distance(this.center);
+        if ( Math.abs(distancia) <= this.getRadio()) {
             dentro = true;
         } else {
             dentro = false;

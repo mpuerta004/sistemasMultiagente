@@ -31,12 +31,12 @@ public class Main {
         System.out.println("Numero de agentes que estan perdidos segun ellos: " + listaAgentesPerdidosSegunEllos.size());
 
 
-        for (tablero.getEtapa(); tablero.getEtapa() < 70; tablero.aumentarEtapa()) {
+        for (tablero.getEtapa(); tablero.getEtapa() < 250; tablero.aumentarEtapa()) {
             tablero.getTablero().keySet().forEach(agente -> {
 
                 agente.consensoDeCoordenadas();
                 // System.out.println("Calcular las coordenadas");
-                agente.movimiento();
+                agente.calcularVectorMovimiento();
                 // System.out.println("Calcular el vector de mov");
                 tablero.actualizarPosiciones(agente);
                 //agente.actualizarPosicion();
@@ -66,7 +66,7 @@ public class Main {
         });
         System.out.println("Cueston estas perdidos:" + contador44);
 
-            /*
+
             System.out.println(tablero.getEtapa());
             List<Agente> listaAgentes = tablero.getTablero().keySet().stream()
                     .filter(agente -> tablero.isDentro(tablero.getTablero().get(agente))).collect(Collectors.toList());
@@ -78,7 +78,7 @@ public class Main {
 
             List<Agente> listaAgentes4 = tablero.getTablero().keySet().stream()
                     .filter(agente -> agente.isDentroFigura()).collect(Collectors.toList());
-            System.out.println("Numero de agentes que estan dentro de la figura segun el tablero: " + listaAgentes4.size());*/
+            System.out.println("Numero de agentes que estan dentro de la figura segun el tablero: " + listaAgentes4.size());
         application.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 

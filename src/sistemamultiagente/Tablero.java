@@ -139,6 +139,7 @@ public class Tablero {
         // ha encontrado en esa cierta distancia al agente2, entonces este metodo lo que hace
         // es darle la infromacion que le daria ese sensor.
         double distanciaReal = distanciaRealEuclideaPosicionesAgente(agente1, agente2);
+        //todo MAite: añadir error.
         double distanciaMaxSensor = agente1.getDistanciaMaxSensor();
         /** ALERT luego aqui le metes el error, de momento no*/
         // double error = errorUniforme(distanciaMaxSensor);

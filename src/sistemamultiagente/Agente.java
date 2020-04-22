@@ -1,7 +1,7 @@
 package sistemamultiagente;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 public class Agente {
@@ -15,9 +15,8 @@ public class Agente {
     private final double distanciaMaxMov = 1.5;
     private final int numDePasosParaMediarLasTrilateraciones = 10;
     private final int numTrilateracionesGuardo = 10;
-    private final double tamañoAgente = 0.5;
+    private final double tamañoAgente = 0.25;
     private final double radioDeRepulsion = 1.0;
-
 
     private final Figura figura = new Figura();
 
@@ -43,7 +42,7 @@ public class Agente {
     }
 
     // Funciones  get atributos del agente.-----------------------------------------------------------------------------
-    public double getTamañoAgente() {
+    public double getTamanoAgente() {
         return tamañoAgente;
     }
 
@@ -230,9 +229,9 @@ public class Agente {
                 if (Tablero.getInstance().getEtapa() % numDePasosParaMediarLasTrilateraciones == 0) {
                     this.posicion = mediaTrilateracion();
                 }
-            }else {
-                    //todo MAITE, cuando no estan perdidos tambien deberian realizar este ajuste, porque hay fallos,
-                    // aqui al no haber fallos pues claro.... no puedo hacerlo porque da errores...
+            } else {
+                //todo MAITE, cuando no estan perdidos tambien deberian realizar este ajuste, porque hay fallos,
+                // aqui al no haber fallos pues claro.... no puedo hacerlo porque da errores...
             }
 
         }
@@ -245,15 +244,16 @@ public class Agente {
         return agentesCercanosNoPerdidos.subList(0, 3);
     }
 
-    /** Funciones esenciales del programa:
-     * Categoria Calcular el movimiento| ----------------------------------------------------------------------------*/
-
+    /**
+     * Funciones esenciales del programa:
+     * Categoria Calcular el movimiento| ----------------------------------------------------------------------------
+     */
 
 
     //movFuera:
-    //Si el agente esta fuera de la figura, debe moverse hacia una direccion aleatoria.
+    //Si el agente esta fuera de la figura, debe moverse hacia una direccion aleatoria, dentro del rango de movimiento
+    //que tiene.
     private Vector movFuera() {
-        // Va hacia una direccion aleatoria.
         double r1;
         double r2;
         if (Math.random() < 0.5) {
@@ -270,70 +270,71 @@ public class Agente {
     }
 
 
-
     //movDentro:
-    //
+    //La calcula la repulsion que cada agente ejerce sobre otro agente, cuando estan dentro de la figura, el resultado de
+    //ña suma de las respulsiones es lo que el agente se va a mover.
     private Vector movDentro() {
-        List agentesCerca = Tablero.getInstance().agentesCercanosNoPerdidos(this);
-        Point solucion = new Point(0.0, 0.0);
-        /* Ten cuidado que aqui dentro juegas con poiont porque las posiciones son puntos
-         * pero bueno tu quieres un vector. ten cuidado. */
-        Iterator<Agente> iterator = agentesCerca.iterator();
-        while (iterator.hasNext()) {
-            Agente agenteI = iterator.next();
-            double distanciaAgente = Tablero.getInstance().sensorAgente(this, agenteI);
-            Point vector = this.posicion.sub(agenteI.getPosicion());
-            Point vectorI = vector.div(distanciaAgente);
-            Point vectorII = vectorI.scale(radioDeRepulsion - distanciaAgente);
-            solucion = solucion.add(vectorII);
-        }
-        Vector vector = new Vector(solucion.getX(), solucion.getY());
-        // si se va a salir queremos que con una probabilidad muy alta se quede quiete o se mueva aleatoriamente dentro
-        //de la figura.
-        if (this.figura.isDentroFigura(this.posicion.add(vector))) {
-            double r;
-            r = Math.random();
-            if (r > 0.75) {
-                vector = new Vector(0.0, 0.0);
-            } else {
-                Boolean movimientoNoPosible = true;
-                while (movimientoNoPosible) {
-                    vector = movFuera();
-                    if (this.figura.isDentroFigura(this.posicion.add(vector))) ;
-                    {
-                        movimientoNoPosible = false;
-                    }
-                }
-            }
-        }
-        return vector;
+        AtomicReference<Point> solucion1 = new AtomicReference<>(new Point(0.0, 0.0));
+        Tablero.getInstance().agentesCercanosNoPerdidos(this).forEach(agente -> {
+            double distanciaAgente = Tablero.getInstance().sensorAgente(this, agente);
+            Point diferenciaPosiciones = this.posicion.sub(agente.getPosicion());
+            Point repulsionPorEseAgente = diferenciaPosiciones.div(distanciaAgente).scale(radioDeRepulsion - distanciaAgente);
+            //todo EGO: java me obligo a hacerlo atomico es correcto?
+            solucion1.set(repulsionPorEseAgente.add(solucion1.get()));
+        });
+
+        return new Vector(solucion1.get().getX(), solucion1.get().getY());
+
     }
 
+    //CalcularVectorMovimiento:
+    //calculo lo que tengo que moverme pero no realizo el movimiento.
+    //Este caclulo se hace siguientdo las siguientes normal:
+    //Si estoy perdido o figuera de la figura ---> movFuera().
+    //si estoy dentro de la figura ----> movDentro().
+    // Si este movimiento sumado a mi opision ocasiona que me falga d ela figura, hago una porbabilidad si esta p
+    //probabilidad es menor del 0.75 entonces me quedo quiero no me muevo, en caso contrario (con posibilidad pequeña
+    //creo un movumiento aleatoria (MovFuera) asegurandome que este me deja dentro de la figura.
     public void calcularVectorMovimiento() {
-        if (this.perdido) {
+        if (this.perdido) { // esta perdido.
             this.vectorMovimiento = this.movFuera();
-        } else {
-            if (this.figura.isDentroFigura(this.posicion)) {
+        } else { // no esta perdido
+            if (this.figura.isDentroFigura(this.posicion)) { // esta dentro de la figura
                 this.vectorMovimiento = this.movDentro();
+                if (this.figura.isDentroFigura(this.posicion.add(this.vectorMovimiento))) {
+                    if (Math.random() < 0.75) {
+                        this.vectorMovimiento = new Vector(0.0, 0.0);
+                    } else {
+                        this.vectorMovimiento = movFuera();
+                        while (!this.figura.isDentroFigura(this.posicion.add(this.vectorMovimiento))) {
+                            this.vectorMovimiento = movFuera();
+                        }
+                    }
+                }
             } else {
                 this.vectorMovimiento = this.movFuera();
             }
         }
     }
 
+
+    //actualizarPosicion:
+    //si el agente no esta perdido, es decir tiene posicion, sumo su posicion y el vector movimiento para definir su
+    //nueva posicion.
+    //Esta funcione s llamada en el tablero.
     public void actualizarPosicion() {
+        //todo MAite --> añadir error.
         if (this.posicion != null) {
             this.posicion = this.posicion.add(this.vectorMovimiento);
-            this.posicion = Tablero.getInstance().posicionModeloTablero(this.posicion);
+            this.posicion = Tablero.getInstance().posicionModuloTablero(this.posicion);
         }
+    }
 
-}
-
-    public boolean isDentroFigura() {
-        if (this.posicion == null) {
-            return false;
-        }
-        if (this.getFigura().isDentroFigura(this.getPosicion())) {
+    //agenteisDentroFigura:
+    //Si el agente no esta perdido y su posicion (la que el cree) esta dentro d ela figura, entonces devuelve True
+    //en caso contrario, es decir la posicion sea nula o el agente este fuera de la figura, devuelve False.
+    public boolean agenteisDentroFigura() {
+        if (this.posicion != null && this.figura.isDentroFigura(this.posicion)) {
             return true;
         } else {
             return false;

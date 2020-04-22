@@ -7,7 +7,7 @@ public class Figura {
      */
 
     private final double radio = 3.0;
-    private final Point center = new Point(6.5, 6.5);
+    private final Point center = new Point(5.0, 5.0);
     private final Circle figura;
 
     /**

@@ -109,7 +109,7 @@ public class Tablero {
 
     public boolean conflictos(Point point) {
         Optional<Agente> agenteConflicto = tablero.keySet().stream()
-                .filter(agenteTablero -> tablero.get(agenteTablero).distance(point) <= agenteTablero.getTamañoAgente())
+                .filter(agenteTablero -> tablero.get(agenteTablero).distance(point) <= agenteTablero.getTamanoAgente())
                 .findAny();
         return agenteConflicto.isPresent();
     }
@@ -166,21 +166,20 @@ public class Tablero {
     public void actualizarPosiciones(Agente agente) {
 
         /** ALERT se puede quedar en un bucle infinito  si la posicion siempre sale la misma */
-        Point nuevaPosicion = posicionModeloTablero(tablero.get(agente).add(agente.getVectorMovimiento()));
+        Point nuevaPosicion = posicionModuloTablero(tablero.get(agente).add(agente.getVectorMovimiento()));
         tablero.put(agente, nuevaPosicion);
 
-        /*while (conflictos(agente)) {
-
+       /* while (conflictos(tablero.get(agente))) {
             System.out.println("Conflicto agente :" + tablero.get(agente) + ",  Etapa: " + getEtapa() + "  id del agente " + agente.getId());
-            agente.movimiento();
-            nuevaPosicion = posicionModeloTablero(tablero.get(agente).add(agente.getVectorMovimiento()));
+            agente.calcularVectorMovimiento();
+            nuevaPosicion = posicionModuloTablero(tablero.get(agente).add(agente.getVectorMovimiento()));
             tablero.replace(agente, nuevaPosicion);
         }*/
         // si el agente se sale por el tablero por un lado regresara por el contrario
         agente.actualizarPosicion();
     }
 
-    public Point posicionModeloTablero(Point nuevaPosicion) {
+    public Point posicionModuloTablero(Point nuevaPosicion) {
         double posicionX = nuevaPosicion.getX();
         double posicionY = nuevaPosicion.getY();
         if (!this.isDentro(nuevaPosicion)) {

@@ -19,19 +19,18 @@ public class Main {
         GUI application = new GUI(EjeXMaximo, EjeYmaximo);
         //Agentes no perdidos
         for (int i = 0; i < 10; i++) {
-
-            tablero.añadirAgente(false);
+            tablero.anadirAgente(false);
         }
         // Agentes perdidos
-        for (int i = 0; i < 10; i++) {
-            tablero.añadirAgente(true);
+        for (int i = 0; i < 20; i++) {
+            tablero.anadirAgente(true);
         }
         List<Agente> listaAgentesPerdidosSegunEllos = tablero.getTablero().keySet().stream()
                 .filter(agente -> agente.getPerdido()).collect(Collectors.toList());
         System.out.println("Numero de agentes que estan perdidos segun ellos: " + listaAgentesPerdidosSegunEllos.size());
 
 
-        for (tablero.getEtapa(); tablero.getEtapa() < 150; tablero.aumentarEtapa()) {
+        for (tablero.getEtapa(); tablero.getEtapa() < 250; tablero.aumentarEtapa()) {
             tablero.getTablero().keySet().forEach(agente -> {
 
                 agente.consensoDeCoordenadas();
@@ -47,21 +46,22 @@ public class Main {
         AtomicInteger contador44 = new AtomicInteger();
         tablero.getTablero().keySet().forEach(agente -> {
             System.out.println("Agente ......................................................................");
-            System.out.println("Posicion del agente:");
+            //System.out.println("Posicion del agente:");
             if (agente.getPosicion() != null) {
-                System.out.println("Posicion x: " + agente.getPosicion().getX());
-                System.out.println("Posicion y: " + agente.getPosicion().getY());
-                System.out.println("Si esta dentro con la posicion que cree el agente: " + tablero.isDentro(agente.getPosicion()));
+                System.out.println("Diferencia entre las posion real y la del agente:" );
+                System.out.println( agente.getPosicion().sub(tablero.getTablero().get(agente)));
+                //System.out.println("Posicion x: " + agente.getPosicion().getX());
+                //System.out.println("Posicion y: " + agente.getPosicion().getY());
+                //System.out.println("Si esta dentro con la posicion que cree el agente: " + tablero.isDentro(agente.getPosicion()));
             } else {
                 contador44.set(contador44.get() + 1);
                 System.out.println("Posicion:  NULL");
 
             }
+            //System.out.println("Posicion Del agente real");
+            //System.out.println("Posicion real:" + tablero.getTablero().get(agente));
 
-            System.out.println("Posicion Del agente real");
-            System.out.println("Posicion real:" + tablero.getTablero().get(agente));
-
-            System.out.println("Si esta dentro con la posicion del tablero: " + tablero.isDentro(tablero.getTablero().get(agente)));
+            //System.out.println("Si esta dentro con la posicion del tablero: " + tablero.isDentro(tablero.getTablero().get(agente)));
         });
         System.out.println("Cueston estas perdidos:" + contador44);
 

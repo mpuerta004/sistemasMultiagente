@@ -323,9 +323,14 @@ public class Agente {
     //nueva posicion.
     //Esta funcione s llamada en el tablero.
     public void actualizarPosicion() {
-        //todo MAite --> añadir error.
+        //todo MAITE --> añadir error.
         if (this.posicion != null) {
-            this.posicion = this.posicion.add(this.vectorMovimiento);
+
+            this.posicion = this.posicion.
+                    add(this.vectorMovimiento).
+                    add(
+                            new Point (Tablero.getInstance().errorUniforme(this.distanciaMaxMov),
+                                    Tablero.getInstance().errorUniforme(this.distanciaMaxMov)));
             this.posicion = Tablero.getInstance().posicionModuloTablero(this.posicion);
         }
     }

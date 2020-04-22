@@ -1,5 +1,6 @@
 package sistemamultiagente;
 
+import javax.naming.NameNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -21,12 +22,12 @@ public class Tablero {
      * MÉTODOS
      */
 
+    //Contructores, en las dos funciones creamos el contructor.---------------------------------------------------------
     private Tablero() {
         /* Esto es el contructor y esta pruvado porque solo tengo un tablero.*/
         tablero = new HashMap<>();
         this.etapa = 0;
     }
-
 
     public static Tablero getInstance() {
         /* Como el contructor esta vacio y necesito poner acceder a la intancia
@@ -35,6 +36,7 @@ public class Tablero {
         return myInstance;
     }
 
+    //Funciones get atributos del tablero. -----------------------------------------------------------------------------
     public double getEjeYmaximo() {
         return ejeYmaximo;
     }
@@ -43,142 +45,140 @@ public class Tablero {
         return ejeXMaximo;
     }
 
-    public double distanciaRealEuclideaPosicionesAgente(Agente agente1, Agente agente2) {
-        // Esta es la distancia REAL
-
-        Point posAgente1 = tablero.get(agente1);
-        Point posAgente2 = tablero.get(agente2);
-
-
-        return posAgente1.distance(posAgente2);
-    }
-
-
     public int getEtapa() {
         return etapa;
     }
 
-    private Point primeraCoordenadaAgenteTablero(Boolean perdido) {
-        double posicionX;
-        double posicionY;
-
-        if (perdido) {
-            // si entra aqui significa que esta perdido
-            posicionX = Math.random() * ejeXMaximo;
-            posicionY = Math.random() * ejeYmaximo;
-
-        } else {
-            // sino esta perdido los creamos en una zona concentrica.
-            double masMenos = Math.random();
-            if ((masMenos) < 0.5) {
-                posicionX = this.getEjeXMaximo() / 2 + Math.random() * (this.ejeYmaximo / 3) / 2;
-            } else {
-                posicionX = this.getEjeXMaximo() / 2 - Math.random() * (this.ejeYmaximo / 3) / 2;
-            }
-            double masMenos2 = Math.random();
-            if ((masMenos2) < 0.5) {
-                posicionY = this.getEjeXMaximo() / 2 + (Math.random() * (this.ejeYmaximo / 3) / 2);
-            } else {
-
-                posicionY = this.getEjeYmaximo() / 2 - Math.random() * ((this.ejeYmaximo / 3) / 2);
-            }
-        }
-        Point punto = new Point(posicionX, posicionY);
-        return punto;
+    public HashMap<Agente, Point> getTablero() {
+        return tablero;
     }
+    //------------------------------------------------------------------------------------------------------------------
 
-    public void añadirAgente(Boolean perdido) {
-        /* Comprueba que si sale False ese nuevo agente ya no puede estar en el tablero porque
-        ya hay uno en esa posicion del tablero.*/
+    /**
+     * Funciones esenciales del programa: ---------------------------------------------------------------------------
+     */
 
-        int idAgente = tablero.size();
-        Point punto1 = primeraCoordenadaAgenteTablero(perdido);
-        while (conflictos(punto1)) {
-            System.out.println("No puedo meter ese agente en esa posicion");
-            System.out.println(punto1.toString());
-            punto1 = primeraCoordenadaAgenteTablero(perdido);
-        }
-        Agente agente = new Agente(perdido, punto1, idAgente);
-        tablero.put(agente, punto1);
-        // aqui se le mete posicionTablero pero si perdido =false entonces el agente no tiene acceso a su posicion.
+
+    //distanciaRealEuclideaPosicionesAgente:
+    public double distanciaRealEuclideaPosicionesAgente(Agente agente1, Agente agente2) {
+        Point posAgente1 = tablero.get(agente1);
+        Point posAgente2 = tablero.get(agente2);
+        return posAgente1.distance(posAgente2);
     }
 
     public void aumentarEtapa() {
         this.etapa = this.etapa + 1;
     }
 
-    public boolean conflictos(Point point) {
+    //primeraCoordenada AgenteTablero:
+    //Si el agente esta perdido, le da una coordenada aletoria en calquier posicion el tablero.
+    //si al egente no esta perdido le da una posicion dentro del cuadrante central de la diviison en 9 cuadrantes del
+    // tablero
+    private Point primeraCoordenadaAgenteTablero(Boolean perdido) {
+        double posicionX;
+        double posicionY;
+        if (perdido) {
+            posicionX = Math.random() * ejeXMaximo;
+            posicionY = Math.random() * ejeYmaximo;
+        } else {
+            if (Math.random() < 0.5) {
+                posicionX = this.getEjeXMaximo() / 2 + Math.random() * (this.ejeYmaximo / 3) / 2;
+            } else {
+
+                posicionX = this.getEjeXMaximo() / 2 - Math.random() * (this.ejeYmaximo / 3) / 2;
+            }
+            if (Math.random() < 0.5) {
+                posicionY = this.getEjeXMaximo() / 2 + (Math.random() * (this.ejeYmaximo / 3) / 2);
+            } else {
+
+                posicionY = this.getEjeYmaximo() / 2 - Math.random() * ((this.ejeYmaximo / 3) / 2);
+            }
+        }
+        return new Point(posicionX, posicionY);
+    }
+
+    //conflicto:
+    //Da un true si la posicion que se quiere meter el agente proboca que un agente tenga que estar encima de otro.
+    private boolean conflictos(Point point) {
         Optional<Agente> agenteConflicto = tablero.keySet().stream()
-                .filter(agenteTablero -> tablero.get(agenteTablero).distance(point) <= agenteTablero.getTamanoAgente())
+                .filter(agenteTablero -> tablero.get(agenteTablero).distance(point) <= 2 * agenteTablero.getTamanoAgente())
                 .findAny();
         return agenteConflicto.isPresent();
     }
 
-    public List<Agente> agentesCercanos(Agente agente) {
-        // Devuelve una LIST de objetos agente que estan cerca del agente que tiene como parametro esta funcion.
-        double distanciaMaxSensor = agente.getDistanciaMaxSensor();
-
-        List<Agente> listaAgentesCercanos = tablero.keySet().stream()
-                .filter(agenteCercano -> distanciaRealEuclideaPosicionesAgente(agenteCercano, agente) < distanciaMaxSensor && !agenteCercano.equals(agente))
-                .collect(Collectors.toList());
-
-        return listaAgentesCercanos;
+    //añadirAgente:
+    //Se calcula el id del agente, posteriormente se obtiene su posicion en el tablero (el agente no tiene porque saberla
+    // se mira si hay conflicto y en caso de haberlo se vuelve a calcular otra posicion, sino se crea el agente y se mete
+    //dicho agente en el tablero.
+    public void anadirAgente(Boolean perdido) {
+        int idAgente = tablero.size();
+        Point punto1 = primeraCoordenadaAgenteTablero(perdido);
+        while (conflictos(punto1)) punto1 = primeraCoordenadaAgenteTablero(perdido);
+        Agente agente = new Agente(perdido, punto1, idAgente);
+        tablero.put(agente, punto1);
     }
 
+    //agentesCercanos:
+    //Te devuelve los agente que estan desde tu posicion a una distancia manor o igual a la del
+    // sensor(distanciaMaxSensor).
+    private List<Agente> agentesCercanos(Agente agente) {
+        double distanciaMaxSensor;
+        distanciaMaxSensor = agente.getDistanciaMaxSensor();
+        return tablero.keySet().stream().filter(agenteCercano ->
+                distanciaRealEuclideaPosicionesAgente(agenteCercano, agente) <
+                        distanciaMaxSensor && !agenteCercano.equals(agente)).collect(Collectors.toList());
+    }
+
+    //agentesCercanosNoPerdidos:
+    //Te devuelve de los agentes cercanos aquellos qu eno estan perdidos, esta funcion se usa basicamente en los agente.
     public List<Agente> agentesCercanosNoPerdidos(Agente agente) {
         List<Agente> agentesCercanos = agentesCercanos(agente);
-        List<Agente> agentesCercanosNoPerdidos = agentesCercanos.stream()
+        return agentesCercanos.stream()
                 .filter(agenteCercano -> !agenteCercano.getPerdido())
                 .collect(Collectors.toList());
-        return agentesCercanosNoPerdidos;
 
     }
 
+    //sensorAgente:
+    //Esto simula el sensor de porximidad, que le da al agente la distacia REAL a la que esta el otro agente,
+    //con un error que debo añadir cuando. CUIDADO como es la real lo hhago con la del tablero y le doy la sol
+    //con el error al agente.
     public double sensorAgente(Agente agente1, Agente agente2) {
-        // El agente 1 tiene un sensor que puede mirar una cierta distancia de su posicion
-        // ha encontrado en esa cierta distancia al agente2, entonces este metodo lo que hace
-        // es darle la infromacion que le daria ese sensor.
-        double distanciaReal = distanciaRealEuclideaPosicionesAgente(agente1, agente2);
-        //todo MAite: añadir error.
-        double distanciaMaxSensor = agente1.getDistanciaMaxSensor();
-        /** ALERT luego aqui le metes el error, de momento no*/
-        // double error = errorUniforme(distanciaMaxSensor);
-        return distanciaReal;
+        return distanciaRealEuclideaPosicionesAgente(agente1, agente2) + errorUniforme(agente1.getDistanciaMaxSensor());
     }
 
-    public HashMap<Agente, Point> getTablero() {
-        return tablero;
+    //todo MAITE:
+    public double errorUniforme(double distanciaMaxSesnsor) {
+        return 0.0;
     }
 
-
-    /**
-     * ALERT cuando
-     * public double errorUniforme(int distanciaMaxSensor){
-     * <p>
-     * return 0.0;
-     * }
-     */
+    //redInalambrica:
+    //Simula la red inalambrica que tienen los agentes, por lo que devuelve la poscion
+    // que el agente le enviaria mediante esa red.
     public Point redInalambrica(Agente agente2) {
-        /** no puedo darle el control de esta comunicacion inalambrica al agente porque sino tendrian mucho poder...*/
         return agente2.getPosicion();
     }
 
+    //actualizarPosicion:
+    //La idea es sumar a la posicion el vector de movimiento del agente. PAra ello debo asegurar que el vector de
+    // movimiento no tiene error todavia. Ademas debo hacer el modulo para que no se salga del espacio y además si esta
+    // nueva posicion provoco que dos agentes estan en la mism posicion (incluido el tamaño que tienene) calculare otra
+    // posicion, para lo cual realizare otro calculo del vector de movimiento.
+    //Por ultimo le dice al agente que tambien actualice su posicion.
     public void actualizarPosiciones(Agente agente) {
-
-        /** ALERT se puede quedar en un bucle infinito  si la posicion siempre sale la misma */
+        Point posicionAntigua= tablero.get(agente);
         Point nuevaPosicion = posicionModuloTablero(tablero.get(agente).add(agente.getVectorMovimiento()));
-        tablero.put(agente, nuevaPosicion);
-
-       /* while (conflictos(tablero.get(agente))) {
-            System.out.println("Conflicto agente :" + tablero.get(agente) + ",  Etapa: " + getEtapa() + "  id del agente " + agente.getId());
+        //todo EGO: creo que hay formas mejores de hacer esto
+       tablero.put(agente, new Point(ejeXMaximo*1000,ejeYmaximo*1000));
+        while(conflictos(nuevaPosicion)){
             agente.calcularVectorMovimiento();
-            nuevaPosicion = posicionModuloTablero(tablero.get(agente).add(agente.getVectorMovimiento()));
-            tablero.replace(agente, nuevaPosicion);
-        }*/
-        // si el agente se sale por el tablero por un lado regresara por el contrario
+            nuevaPosicion = posicionAntigua.add(agente.getVectorMovimiento());
+        }
+        tablero.put(agente, nuevaPosicion);
         agente.actualizarPosicion();
     }
 
+    //posicionModuloTablero:
     public Point posicionModuloTablero(Point nuevaPosicion) {
         double posicionX = nuevaPosicion.getX();
         double posicionY = nuevaPosicion.getY();
@@ -200,18 +200,16 @@ public class Tablero {
         return nuevaPosicion;
     }
 
+    //isDentro:
+    //true si el punto esta dentro del tablero, false en caso contrario.
     public boolean isDentro(Point point) {
-        Boolean isDentro;
         double posicionX = point.getX();
         double posicionY = point.getY();
-
         if (0.0 <= posicionX && posicionX <= this.ejeXMaximo && 0.0 <= posicionY && posicionY <= this.ejeYmaximo) {
-            isDentro = true;
+            return true;
         } else {
-            isDentro = false;
+            return false;
         }
-        return isDentro;
     }
-    /** ALERT Luego posiblemente tengas que implementar una rutina para visualizar los agente en este tablero*/
 
 }

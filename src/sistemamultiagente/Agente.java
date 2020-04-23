@@ -3,7 +3,6 @@ package sistemamultiagente;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-
 public class Agente {
 
     /**
@@ -249,7 +248,6 @@ public class Agente {
      * Categoria Calcular el movimiento| ----------------------------------------------------------------------------
      */
 
-
     //movFuera:
     //Si el agente esta fuera de la figura, debe moverse hacia una direccion aleatoria, dentro del rango de movimiento
     //que tiene.
@@ -317,19 +315,16 @@ public class Agente {
         }
     }
 
-
     //actualizarPosicion:
     //si el agente no esta perdido, es decir tiene posicion, sumo su posicion y el vector movimiento para definir su
     //nueva posicion.
     //Esta funcione s llamada en el tablero.
     public void actualizarPosicion() {
-        //todo MAITE --> añadir error.
         if (this.posicion != null) {
-
             this.posicion = this.posicion.
                     add(this.vectorMovimiento).
                     add(
-                            new Point (Tablero.getInstance().errorUniforme(this.distanciaMaxMov),
+                            new Point(Tablero.getInstance().errorUniforme(this.distanciaMaxMov),
                                     Tablero.getInstance().errorUniforme(this.distanciaMaxMov)));
             this.posicion = Tablero.getInstance().posicionModuloTablero(this.posicion);
         }
@@ -339,10 +334,6 @@ public class Agente {
     //Si el agente no esta perdido y su posicion (la que el cree) esta dentro d ela figura, entonces devuelve True
     //en caso contrario, es decir la posicion sea nula o el agente este fuera de la figura, devuelve False.
     public boolean agenteisDentroFigura() {
-        if (this.posicion != null && this.figura.isDentroFigura(this.posicion)) {
-            return true;
-        } else {
-            return false;
-        }
+        return (this.posicion != null && this.figura.isDentroFigura(this.posicion));
     }
 }

@@ -1,6 +1,5 @@
 package sistemamultiagente;
 
-import javax.naming.NameNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -107,9 +106,9 @@ public class Tablero {
     }
 
     //añadirAgente:
-    //Se calcula el id del agente, posteriormente se obtiene su posicion en el tablero (el agente no tiene porque saberla
-    // se mira si hay conflicto y en caso de haberlo se vuelve a calcular otra posicion, sino se crea el agente y se mete
-    //dicho agente en el tablero.
+    //Se calcula el id del agente, posteriormente se obtiene su posicion en el tablero (el agente no tiene porque
+    // saberla se mira si hay conflicto y en caso de haberlo se vuelve a calcular otra posicion, sino se crea el agente
+    // y se mete dicho agente en el tablero.
     public void anadirAgente(Boolean perdido) {
         int idAgente = tablero.size();
         Point punto1 = primeraCoordenadaAgenteTablero(perdido);

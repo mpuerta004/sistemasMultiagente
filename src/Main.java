@@ -1,4 +1,5 @@
 import sistemamultiagente.Agente;
+import sistemamultiagente.Figura;
 import sistemamultiagente.Tablero;
 
 import javax.swing.*;
@@ -10,13 +11,13 @@ import sistemamultiagente.GUI;
 
 public class Main {
 
-    public static void main(String[] args) {
-
-
+    public static void main(String[] args) throws InterruptedException {
         Tablero tablero = Tablero.getInstance();
         double EjeXMaximo = tablero.getEjeXMaximo();
         double EjeYmaximo = tablero.getEjeYmaximo();
         GUI application = new GUI(EjeXMaximo, EjeYmaximo);
+
+        //application.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //Agentes no perdidos
         for (int i = 0; i < 10; i++) {
             tablero.anadirAgente(false);
@@ -25,10 +26,8 @@ public class Main {
         for (int i = 0; i < 20; i++) {
             tablero.anadirAgente(true);
         }
-        List<Agente> listaAgentesPerdidosSegunEllos = tablero.getTablero().keySet().stream()
-                .filter(agente -> agente.getPerdido()).collect(Collectors.toList());
-        System.out.println("Numero de agentes que estan perdidos segun ellos: " + listaAgentesPerdidosSegunEllos.size());
 
+        //application.paint(application.getGraphics());
 
         for (tablero.getEtapa(); tablero.getEtapa() < 250; tablero.aumentarEtapa()) {
             tablero.getTablero().keySet().forEach(agente -> {
@@ -40,16 +39,19 @@ public class Main {
                 tablero.actualizarPosiciones(agente);
 
 
-
             });
+
+           application.update(application.getGraphics());
+
+
         }
         AtomicInteger contador44 = new AtomicInteger();
         tablero.getTablero().keySet().forEach(agente -> {
             System.out.println("Agente ......................................................................");
             //System.out.println("Posicion del agente:");
             if (agente.getPosicion() != null) {
-                System.out.println("Diferencia entre las posion real y la del agente:" );
-                System.out.println( agente.getPosicion().sub(tablero.getTablero().get(agente)));
+                System.out.println("Diferencia entre las posion real y la del agente:");
+                System.out.println(agente.getPosicion().sub(tablero.getTablero().get(agente)));
                 //System.out.println("Posicion x: " + agente.getPosicion().getX());
                 //System.out.println("Posicion y: " + agente.getPosicion().getY());
                 //System.out.println("Si esta dentro con la posicion que cree el agente: " + tablero.isDentro(agente.getPosicion()));
@@ -66,18 +68,20 @@ public class Main {
         System.out.println("Cueston estas perdidos:" + contador44);
 
 
-            System.out.println(tablero.getEtapa());
-            List<Agente> listaAgentes = tablero.getTablero().keySet().stream()
-                    .filter(agente -> tablero.isDentro(tablero.getTablero().get(agente))).collect(Collectors.toList());
-            System.out.println("Numero de agentes que estan dentro segun el tablero: " + listaAgentes.size());
+        System.out.println(tablero.getEtapa());
+        List<Agente> listaAgentes = tablero.getTablero().keySet().stream()
+                .filter(agente -> tablero.isDentro(tablero.getTablero().get(agente))).collect(Collectors.toList());
+        System.out.println("Numero de agentes que estan dentro segun el tablero: " + listaAgentes.size());
 
-            List<Agente> listaAgentesPerdidosSegunEllos2 = tablero.getTablero().keySet().stream()
-                    .filter(agente -> agente.getPerdido()).collect(Collectors.toList());
-            System.out.println("Numero de agentes que estan perdidos segun ellos: " + listaAgentesPerdidosSegunEllos2.size());
+        List<Agente> listaAgentesPerdidosSegunEllos2 = tablero.getTablero().keySet().stream()
+                .filter(agente -> agente.getPerdido()).collect(Collectors.toList());
+        System.out.println("Numero de agentes que estan perdidos segun ellos: " + listaAgentesPerdidosSegunEllos2.size());
 
-            List<Agente> listaAgentes4 = tablero.getTablero().keySet().stream()
-                    .filter(agente -> agente.agenteisDentroFigura()).collect(Collectors.toList());
-            System.out.println("Numero de agentes que estan dentro de la figura segun el tablero: " + listaAgentes4.size());
+        List<Agente> listaAgentes4 = tablero.getTablero().keySet().stream()
+                .filter(agente -> agente.agenteisDentroFigura()).collect(Collectors.toList());
+        System.out.println("Numero de agentes que estan dentro de la figura segun el tablero: " + listaAgentes4.size());
+
+
         application.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 

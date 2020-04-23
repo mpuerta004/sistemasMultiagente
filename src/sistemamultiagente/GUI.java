@@ -1,4 +1,5 @@
 package sistemamultiagente;
+
 import java.awt.*;
 import javax.swing.*;
 import java.awt.*;
@@ -14,47 +15,47 @@ public class GUI extends JFrame {
         // JFrame GUI = new JFrame();
         super("Sistema Multiagente");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-       //JPanel panel = new JPanel();
+        //JPanel panel = new JPanel();
         //panel.setBorder(BorderFactory.createEmptyBorder((int) width*70,(int) width*70,(int) width*70,(int) width*70));
-        setSize((int) width*80, (int)height*80);
+        setSize((int) width * 80, (int) height * 80);
         //panel.setLayout(new GridLayout(0,1));
         //GUI.add(panel, BorderLayout.CENTER);
         //GUI.getContentPane().add((PopupMenu) BorderFactory.createEmptyBorder((int) width*70,(int) width*70,(int) width*70,(int) width*70));
-                //BorderFactory.createEmptyBorder((int) width*70,(int) width*70,(int) width*70,(int) width*70)));
+        //BorderFactory.createEmptyBorder((int) width*70,(int) width*70,(int) width*70,(int) width*70)));
         //setTitle("Sistema multiganete");
-        getContentPane().setBackground( Color.BLACK );
+        getContentPane().setBackground(Color.BLACK);
 
         setVisible(true);
 
     }
 
 
-
     // draw shapes with Java2D API
     public void paint(Graphics g) {
         super.paint(g);
         //super.paint(g); // call superclass's paint method
-        Graphics2D g2d = (Graphics2D) g ; // cast g to Graphics2D
+        Graphics2D g2d = (Graphics2D) g; // cast g to Graphics2D
         // draw 2D ellipse filled with a blue-yellow gradient
 
         Figura figura = new Figura();
-        Point centroFigura = redimensionarizar(figura.getCenter(),2*figura.getRadio());
+        Point centroFigura = redimensionarizar(figura.getCenter(), 2 * figura.getRadio());
         g2d.setPaint(Color.RED);
-        g2d.fill(new Ellipse2D.Double( centroFigura.getX(), centroFigura.getY(), 2*figura.getRadio()*70, 2*figura.getRadio()*70));
+        g2d.fill(new Ellipse2D.Double(centroFigura.getX(), centroFigura.getY(), 2 * figura.getRadio() * 70, 2 * figura.getRadio() * 70));
 
 
-        Tablero.getInstance() .getTablero().keySet().forEach(agente -> {
-            g2d.setPaint(Color.BLUE);
-            Point centroAgente = redimensionarizar(Tablero.getInstance().getTablero().get(agente),agente.getTamanoAgente());
+        Tablero.getInstance().getTablero().keySet().forEach(agente -> {
+            if (agente.getPerdido()) {
+                g2d.setPaint(Color.BLUE);
+            } else {
+                g2d.setPaint(Color.GREEN);
+            }
+            Point centroAgente = redimensionarizar(Tablero.getInstance().getTablero().get(agente), agente.getTamanoAgente());
             g2d.fill(new Ellipse2D.Double(
                     centroAgente.getX(),
-                   centroAgente.getY(),
-                    (agente.getTamanoAgente()*70),
-                    (agente.getTamanoAgente()*70)));
-                });
-
-
-
+                    centroAgente.getY(),
+                    (agente.getTamanoAgente() * 70),
+                    (agente.getTamanoAgente() * 70)));
+        });
 
 
         // draw 2D rectangle in red
@@ -95,9 +96,9 @@ public class GUI extends JFrame {
 //         BasicStroke.JOIN_ROUND, 10, dashes, 0 ) );
 //         g2d.draw( new Line2D.Double( 320, 30, 395, 150 ) );
 
-         } // end method paint
+    } // end method paint
 
-    private Point redimensionarizar(Point point, double tamano){
-        return point.sub(new Point(tamano/2, tamano/2)).scale(70);
+    private Point redimensionarizar(Point point, double tamano) {
+        return point.sub(new Point(tamano / 2, tamano / 2)).scale(70);
     }
 }

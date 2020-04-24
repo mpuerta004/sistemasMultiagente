@@ -11,18 +11,18 @@ public class Agente {
 
     //ALERT Estos numero luego lees el paper y los pones todos bien.
     private final double distanciaMaxSensor = 1.5;
-    private final double distanciaMaxMov = 1.5;
-    private final int numDePasosParaMediarLasTrilateraciones = 10;
-    private final int numTrilateracionesGuardo = 10;
+    private final double distanciaMaxMov = 0.75;
+    private final int numDePasosParaMediarLasTrilateraciones = 2;
+    private final int numTrilateracionesGuardo = 6;
     private final double tamañoAgente = 0.25;
-    private final double radioDeRepulsion = 1.0;
+    private final double radioDeRepulsion = 0.25;
 
     private final Figura figura = new Figura();
 
     private Integer id;
     private boolean perdido;
     private Point posicion;
-    private Stack<Point> listaTrilateraciones;
+    private List<Point> listaTrilateraciones;
     private Vector vectorMovimiento;
 
     /**
@@ -35,7 +35,7 @@ public class Agente {
         this.posicion = posicion;
         this.perdido = perdido;
         if (perdido) this.posicion = null;
-        this.listaTrilateraciones = new Stack<>();
+        this.listaTrilateraciones = new ArrayList<>();
         this.vectorMovimiento = new Vector(0.0, 0.0);
         this.id = id;
     }
@@ -73,7 +73,7 @@ public class Agente {
         return posicion;
     }
 
-    public Stack<Point> getListaTrilateraciones() {
+    public List<Point> getListaTrilateraciones() {
         return listaTrilateraciones;
     }
 
@@ -165,42 +165,85 @@ public class Agente {
         double x = (c - b * y) / a;
         return new Point(x, y);
     }
-
-    //todo MAITE: cuando funcione complementamente bien sin errores, e intruduzcas el error, deben emplementarlo.
-    public Point gradientDescent(Point posicionAgente, Point solTrilateraciones) {
-        boolean iterar = true;
-        double beta = 0.9;
-        int i = 0;
-        while (iterar && i < 20) {
-            Line l1 = new Line(posicionAgente, solTrilateraciones);
-            //pendiente
-            double triangulo = l1.getDireccion().getY() / l1.getDireccion().getX();
-            Point nuevo = new Point(solTrilateraciones.getX() - beta * triangulo * solTrilateraciones.getX(),
-                    solTrilateraciones.getY() - beta * triangulo * solTrilateraciones.getY());
-            posicionAgente = solTrilateraciones;
-            solTrilateraciones = nuevo;
-            i++;
-            // condiciones, si la distancia entre lso putnos es manor que el tamaño del agente o la pendiente ya es enanisima.
-            if (solTrilateraciones.distance(posicionAgente) < this.tamañoAgente || triangulo < 0.1) iterar = false;
-        }
-        return solTrilateraciones;
-    }
+//    private Point gradiente( List<Agente> agentesCercanos, Point posicionActual, List<Double> dist) {
+//        double x = posicionActual.getX();
+//        double y = posicionActual.getY();
+//        double solX = 0;
+//        double solY = 0;
+//        for(int i=0; i<agentesCercanos.size(); i++) {
+//            solX += -2 * (agentesCercanos.get(i).getPosicion().getX() - x) *
+//                    (Math.sqrt(Math.pow(agentesCercanos.get(i).getPosicion().getX() - x, 2) +
+//                            Math.pow(agentesCercanos.get(i).getPosicion().getY() - y, 2) - dist.get(i))) /
+//                    Math.sqrt(Math.pow(agentesCercanos.get(i).getPosicion().getX() - x, 2) + Math.pow(agentesCercanos.get(i).getPosicion().getY() - y, 2));
+//
+//            solY += -2 * (agentesCercanos.get(i).getPosicion().getY()  - y) * (Math.sqrt(Math.pow(agentesCercanos.get(i).getPosicion().getX()
+//                    - x, 2) + Math.pow(agentesCercanos.get(i).getPosicion().getY() - y, 2) - dist.get(i))) /
+//                    Math.sqrt(Math.pow(agentesCercanos.get(i).getPosicion().getY()  - x, 2) + Math.pow(n[i].y - y, 2));
+//        }
+//    }
+//    //todo MAITE: cuando funcione complementamente bien sin errores, e intruduzcas el error, deben emplementarlo.
+//    public Point gradientDescent(List<Agente> AgentesCercanos, Point posicionAgente) {
+//        double beta = 0.5;
+//        int maxiteraciones = 500;
+//        double maxError = 0.1;
+//        int iterador=0;
+//        Point posicionActual = posicionAgente;
+//        List<Double> dist= new ArrayList<>();
+//        for (int i=0;i<AgentesCercanos.size(); i++){
+//            dist.add(Tablero.getInstance().distanciaRealEuclideaPosicionesAgente(
+//                    AgentesCercanos.get(i),
+//                    this));
+//        }
+//
+//        Point gradiente = gradiente(AgentesCercanos,posicionActual, dist );
+//        while(iterador<maxiteraciones &&
+//                Math.abs(gradiente.getX())<maxError
+//                && Math.abs(gradiente.getY())<maxError){
+//
+//            posicionActual= new Point(
+//                    posicionActual.getX()-beta-gradiente.getX(),
+//                    posicionActual.getY()-beta*gradiente.getY()
+//            );
+//            gradiente =gradiente(AgentesCercanos,posicionActual, dist );
+//
+//        }
+//        Line l1 = new Line(posicionAgente, solTrilateraciones);
+//        double triangulo = l1.getDireccion().getY() / l1.getDireccion().getX();
+//        Point nuevo = new Point(
+//                solTrilateraciones.getX() - beta * triangulo * solTrilateraciones.getX(),
+//                solTrilateraciones.getY() - beta * triangulo * solTrilateraciones.getY()
+//        );
+//        posicionAgente = solTrilateraciones;
+//        solTrilateraciones = nuevo;
+//        while ((solTrilateraciones.distance(posicionAgente) < this.tamañoAgente || triangulo < 0.1) && maxiteraciones < 20) {
+//            l1 = new Line(posicionAgente, solTrilateraciones);
+//            triangulo = l1.getDireccion().getY() / l1.getDireccion().getX();
+//            nuevo = new Point(
+//                    solTrilateraciones.getX() - beta * triangulo * solTrilateraciones.getX(),
+//                    solTrilateraciones.getY() - beta * triangulo * solTrilateraciones.getY()
+//            );
+//            posicionAgente = solTrilateraciones;
+//            solTrilateraciones = nuevo;
+//
+//            maxiteraciones++;
+//        }
+    // return solTrilateraciones;
+    //}
 
     //todo MAITE: ver que va bien y que guarda las que tiene que guardar, no mas!
     private Point mediaTrilateracion() {
-        if (listaTrilateraciones.size() <= numTrilateracionesGuardo) {
-            return this.posicion;
-        } else {
-            double sumX = 0.0;
-            double sumY = 0.0;
-            for (int i = 0; i < numTrilateracionesGuardo; i++) {
-                Point nuevo = listaTrilateraciones.pop();
-                sumX += nuevo.getX();
-                sumY += nuevo.getY();
-            }
-            return new Point(sumX / numTrilateracionesGuardo, sumY / numTrilateracionesGuardo);
+        double sumX = 0.0;
+        double sumY = 0.0;
+        //if (listaTrilateraciones.size()==0) {return new Point (sumX,sumY);}else{
+        for (int i = 0; i < listaTrilateraciones.size(); i++) {
+            Point nuevo = listaTrilateraciones.get(i);
+            sumX += nuevo.getX();
+            sumY += nuevo.getY();
         }
+
+        return new Point(sumX / this.listaTrilateraciones.size(), sumY / this.listaTrilateraciones.size());
     }
+
 
     //consensoDeCoordenadas:
     // Si el agente estaba perdido y hay al menos tres agentes no perdidos cerca ---> calculo el baricentro y realizo
@@ -221,20 +264,36 @@ public class Agente {
                 tresAgentesCercanosNoPerdidos = tresAgentesDeUnaLista(agentesCercanosNoPerdidos);
                 Point solTrilateracion = this.trilateracion(tresAgentesCercanosNoPerdidos);
                 //todo Maite: cuando arregles el descenso del gradiente porque halla errores.
-                // solTrilateracion = this.gradientDescent(this.posicion, solTrilateracion );
+                //solTrilateracion = this.gradientDescent(this.posicion, solTrilateracion);
                 this.posicion = solTrilateracion;
                 //todo EGO: esta bien usar add o debria ser push ¿?
-                this.listaTrilateraciones.push(solTrilateracion);
-                if (Tablero.getInstance().getEtapa() % numDePasosParaMediarLasTrilateraciones == 0) {
-                    this.posicion = mediaTrilateracion();
-                }
+                this.listaTrilateraciones.add(solTrilateracion);
+                //if (Tablero.getInstance().getEtapa() % numDePasosParaMediarLasTrilateraciones == 0) {
+                //    this.posicion = mediaTrilateracion();
             } else {
-                //todo MAITE, cuando no estan perdidos tambien deberian realizar este ajuste, porque hay fallos,
-                // aqui al no haber fallos pues claro.... no puedo hacerlo porque da errores...
+                // this.posicion = this.trilateracion(tresAgentesCercanosNoPerdidos);
+                // Point solTrilateracion = this.trilateracion(tresAgentesCercanosNoPerdidos);
+                //solTrilateracion = this.gradientDescent(this.posicion, solTrilateracion);
+                //this.posicion = solTrilateracion;
+
+                //this.listaTrilateraciones.add(solTrilateracion);
             }
+//                tresAgentesCercanosNoPerdidos = tresAgentesDeUnaLista(agentesCercanosNoPerdidos);
+////                Point punto =
+////                        this.trilateracion(tresAgentesCercanosNoPerdidos);
+//////                listaTrilateraciones.push(punto);
+////                this.posicion=punto;
+
+//            if (Tablero.getInstance().getEtapa() % numDePasosParaMediarLasTrilateraciones == 0) {
+//                //System.out.println("Estamos en la etapa:" + Tablero.getInstance().getEtapa());
+//                this.posicion = mediaTrilateracion();
+//                this.listaTrilateraciones = new ArrayList<>();
+//////                //todo MAITE, cuando no estan perdidos tambien deberian realizar este ajuste, porque hay fallos,
+//////                // aqui al nno haber fallos pues claro.... no puedo hacerlo porque da errores...
 
         }
     }
+
 
     //tresAgentesDeUnaLista:
     //Voy a coger de la lista de agentes cercanos no perdidos, 3 cualquira de ellos.
@@ -280,8 +339,19 @@ public class Agente {
             //todo EGO: java me obligo a hacerlo atomico es correcto?
             solucion1.set(repulsionPorEseAgente.add(solucion1.get()));
         });
+        Vector vectorMovimiento = new Vector(solucion1.get().getX(), solucion1.get().getY());
+        if (!this.figura.isDentroFigura(this.posicion.add(vectorMovimiento))) {
+            if (Math.random() < 0.75) {
+                vectorMovimiento = new Vector(0.0, 0.0);
+            } else {
+                vectorMovimiento = movFuera();
+                while (!this.figura.isDentroFigura(this.posicion.add(vectorMovimiento))) {
+                    vectorMovimiento = movFuera();
+                }
+            }
+        }
 
-        return new Vector(solucion1.get().getX(), solucion1.get().getY());
+        return vectorMovimiento;
 
     }
 
@@ -299,16 +369,16 @@ public class Agente {
         } else { // no esta perdido
             if (this.figura.isDentroFigura(this.posicion)) { // esta dentro de la figura
                 this.vectorMovimiento = this.movDentro();
-                if (this.figura.isDentroFigura(this.posicion.add(this.vectorMovimiento))) {
-                    if (Math.random() < 0.75) {
-                        this.vectorMovimiento = new Vector(0.0, 0.0);
-                    } else {
-                        this.vectorMovimiento = movFuera();
-                        while (!this.figura.isDentroFigura(this.posicion.add(this.vectorMovimiento))) {
-                            this.vectorMovimiento = movFuera();
-                        }
-                    }
-                }
+//                    if (!this.figura.isDentroFigura(this.posicion.add(this.vectorMovimiento))) {
+//                        if (Math.random() < 0.75) {
+//                            this.vectorMovimiento = new Vector(0.0, 0.0);
+//                        } else {
+//                            this.vectorMovimiento = movFuera();
+//                            while (!this.figura.isDentroFigura(this.posicion.add(this.vectorMovimiento))) {
+//                                this.vectorMovimiento = movFuera();
+//                            }
+//                        }
+//                    }
             } else {
                 this.vectorMovimiento = this.movFuera();
             }

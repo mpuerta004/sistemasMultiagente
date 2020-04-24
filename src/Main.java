@@ -11,7 +11,12 @@ import sistemamultiagente.GUI;
 
 public class Main {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
+        Main main = new Main();
+        main.execute();
+    }
+
+    private void execute() {
         Tablero tablero = Tablero.getInstance();
         double EjeXMaximo = tablero.getEjeXMaximo();
         double EjeYmaximo = tablero.getEjeYmaximo();
@@ -27,9 +32,9 @@ public class Main {
             tablero.anadirAgente(true);
         }
 
-        //application.paint(application.getGraphics());
+        application.paint(application.getGraphics());
 
-        for (tablero.getEtapa(); tablero.getEtapa() < 250; tablero.aumentarEtapa()) {
+        for (tablero.getEtapa(); tablero.getEtapa() <100; tablero.aumentarEtapa()) {
             tablero.getTablero().keySet().forEach(agente -> {
 
                 agente.consensoDeCoordenadas();
@@ -42,16 +47,22 @@ public class Main {
             });
 
            application.update(application.getGraphics());
-
+            try {
+                Thread.sleep(1*100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         }
         AtomicInteger contador44 = new AtomicInteger();
         tablero.getTablero().keySet().forEach(agente -> {
             System.out.println("Agente ......................................................................");
             //System.out.println("Posicion del agente:");
+            System.out.println(agente.getListaTrilateraciones());
             if (agente.getPosicion() != null) {
                 System.out.println("Diferencia entre las posion real y la del agente:");
                 System.out.println(agente.getPosicion().sub(tablero.getTablero().get(agente)));
+
                 //System.out.println("Posicion x: " + agente.getPosicion().getX());
                 //System.out.println("Posicion y: " + agente.getPosicion().getY());
                 //System.out.println("Si esta dentro con la posicion que cree el agente: " + tablero.isDentro(agente.getPosicion()));

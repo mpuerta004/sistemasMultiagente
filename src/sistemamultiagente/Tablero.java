@@ -143,13 +143,18 @@ public class Tablero {
     //con un error que debo añadir cuando. CUIDADO como es la real lo hhago con la del tablero y le doy la sol
     //con el error al agente.
     public double sensorAgente(Agente agente1, Agente agente2) {
-        return distanciaRealEuclideaPosicionesAgente(agente1, agente2) + errorUniforme(agente1.getDistanciaMaxSensor());
+        return distanciaRealEuclideaPosicionesAgente(agente1, agente2)+ errorUniforme(agente1.getDistanciaMaxMov());
     }
 
     //todo MAITE:
-    public double errorUniforme(double distanciaMaxSesnsor) {
-        return 0.0;
-    }
+    public double errorUniforme(double distanciaMaxMov) {
+       if (Math.random() < 0.5) {
+            return Math.random() * distanciaMaxMov;
+
+        } else {
+            return -Math.random() * distanciaMaxMov;}}
+     //return 0.0;}
+
 
     //redInalambrica:
     //Simula la red inalambrica que tienen los agentes, por lo que devuelve la poscion
@@ -210,5 +215,6 @@ public class Tablero {
             return false;
         }
     }
+
 
 }

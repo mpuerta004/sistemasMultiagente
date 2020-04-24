@@ -23,7 +23,7 @@ public class GUI extends JFrame {
         //GUI.getContentPane().add((PopupMenu) BorderFactory.createEmptyBorder((int) width*70,(int) width*70,(int) width*70,(int) width*70));
         //BorderFactory.createEmptyBorder((int) width*70,(int) width*70,(int) width*70,(int) width*70)));
         //setTitle("Sistema multiganete");
-        getContentPane().setBackground(Color.BLACK);
+        getContentPane().setBackground(Color.gray);
 
         setVisible(true);
 
@@ -39,15 +39,15 @@ public class GUI extends JFrame {
 
         Figura figura = new Figura();
         Point centroFigura = redimensionarizar(figura.getCenter(), 2 * figura.getRadio());
-        g2d.setPaint(Color.RED);
+        g2d.setPaint(Color.BLACK);
         g2d.fill(new Ellipse2D.Double(centroFigura.getX(), centroFigura.getY(), 2 * figura.getRadio() * 70, 2 * figura.getRadio() * 70));
 
 
         Tablero.getInstance().getTablero().keySet().forEach(agente -> {
             if (agente.getPerdido()) {
-                g2d.setPaint(Color.BLUE);
+                g2d.setPaint(Color.RED);
             } else {
-                g2d.setPaint(Color.GREEN);
+                g2d.setPaint(Color.BLUE);
             }
             Point centroAgente = redimensionarizar(Tablero.getInstance().getTablero().get(agente), agente.getTamanoAgente());
             g2d.fill(new Ellipse2D.Double(
@@ -55,8 +55,11 @@ public class GUI extends JFrame {
                     centroAgente.getY(),
                     (agente.getTamanoAgente() * 70),
                     (agente.getTamanoAgente() * 70)));
-        });
+            g2d.drawString( agente.getId()+ "", Float.parseFloat(centroAgente.getX()+""),
+                    Float.parseFloat(centroAgente.getY()+""));
+        }
 
+        );
 
         // draw 2D rectangle in red
 

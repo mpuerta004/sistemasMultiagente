@@ -148,12 +148,12 @@ public class Tablero {
 
     //todo MAITE:
     public double errorUniforme(double distanciaMaxMov) {
-       if (Math.random() < 0.5) {
-            return Math.random() * distanciaMaxMov;
-
-        } else {
-            return -Math.random() * distanciaMaxMov;}}
-     //return 0.0;}
+//       if (Math.random() < 0.5) {
+//            return Math.random() * distanciaMaxMov;
+//
+//        } else {
+//            return -Math.random() * distanciaMaxMov;}}
+     return 0.0;}
 
 
     //redInalambrica:

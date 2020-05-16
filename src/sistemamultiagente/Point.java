@@ -28,6 +28,7 @@ public class Point {
         );
     }
 
+
     public Point div(double s){
         return new Point(this.getX() / s, this.getY()/s);
     }

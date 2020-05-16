@@ -17,7 +17,7 @@ public class GUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //JPanel panel = new JPanel();
         //panel.setBorder(BorderFactory.createEmptyBorder((int) width*70,(int) width*70,(int) width*70,(int) width*70));
-        setSize((int) width * 80, (int) height * 80);
+        setSize((int) width * 20, (int) height * 20);
         //panel.setLayout(new GridLayout(0,1));
         //GUI.add(panel, BorderLayout.CENTER);
         //GUI.getContentPane().add((PopupMenu) BorderFactory.createEmptyBorder((int) width*70,(int) width*70,(int) width*70,(int) width*70));
@@ -40,7 +40,7 @@ public class GUI extends JFrame {
         Figura figura = new Figura();
         Point centroFigura = redimensionarizar(figura.getCenter(), 2 * figura.getRadio());
         g2d.setPaint(Color.BLACK);
-        g2d.fill(new Ellipse2D.Double(centroFigura.getX(), centroFigura.getY(), 2 * figura.getRadio() * 70, 2 * figura.getRadio() * 70));
+        g2d.fill(new Ellipse2D.Double(centroFigura.getX(), centroFigura.getY(), 2 * figura.getRadio() * 15, 2 * figura.getRadio() *15));
 
 
         Tablero.getInstance().getTablero().keySet().forEach(agente -> {
@@ -53,8 +53,8 @@ public class GUI extends JFrame {
             g2d.fill(new Ellipse2D.Double(
                     centroAgente.getX(),
                     centroAgente.getY(),
-                    (agente.getTamanoAgente() * 70),
-                    (agente.getTamanoAgente() * 70)));
+                    (agente.getTamanoAgente() * 15),
+                    (agente.getTamanoAgente() * 15)));
             g2d.drawString( agente.getId()+ "", Float.parseFloat(centroAgente.getX()+""),
                     Float.parseFloat(centroAgente.getY()+""));
         }
@@ -102,6 +102,6 @@ public class GUI extends JFrame {
     } // end method paint
 
     private Point redimensionarizar(Point point, double tamano) {
-        return point.sub(new Point(tamano / 2, tamano / 2)).scale(70);
+        return point.sub(new Point(tamano / 2, tamano / 2)).scale(15);
     }
 }

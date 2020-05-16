@@ -24,11 +24,11 @@ public class Main {
 
         //application.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //Agentes no perdidos
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 40; i++) {
             tablero.anadirAgente(false);
         }
         // Agentes perdidos
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 120; i++) {
             tablero.anadirAgente(true);
         }
 

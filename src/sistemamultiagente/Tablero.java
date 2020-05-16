@@ -148,12 +148,12 @@ public class Tablero {
 
     //todo MAITE:
     public double errorUniforme(double distanciaMaxMov) {
-//       if (Math.random() < 0.5) {
-//            return Math.random() * distanciaMaxMov;
-//
-//        } else {
-//            return -Math.random() * distanciaMaxMov;}}
-     return 0.0;}
+       if (Math.random() < 0.5) {
+            return Math.random() * distanciaMaxMov;
+
+        } else {
+            return -Math.random() * distanciaMaxMov;}}
+//     return 0.0;}
 
 
     //redInalambrica:
@@ -188,16 +188,20 @@ public class Tablero {
         double posicionY = nuevaPosicion.getY();
         if (!this.isDentro(nuevaPosicion)) {
             while (posicionX < 0.0) {
-                posicionX = this.ejeXMaximo + posicionX;
+                posicionX = - posicionX;
+                //posicionX = this.ejeXMaximo + posicionX;
             }
             while (posicionX > this.ejeXMaximo) {
-                posicionX = posicionX - this.ejeXMaximo;
+                posicionX = this.ejeXMaximo - (posicionX -this.ejeXMaximo);
+               // posicionX = posicionX - this.ejeXMaximo;
             }
             while (posicionY < 0.0) {
-                posicionY = this.ejeYmaximo + posicionY;
+                posicionY = -posicionY;
+                //posicionY = this.ejeYmaximo + posicionY;
             }
             while (posicionY > this.ejeYmaximo) {
-                posicionY = posicionY - this.ejeYmaximo;
+                posicionY = this.ejeYmaximo - (posicionY - this.ejeYmaximo);
+                //posicionY = posicionY - this.ejeYmaximo;
             }
             nuevaPosicion = new Point(posicionX, posicionY);
         }

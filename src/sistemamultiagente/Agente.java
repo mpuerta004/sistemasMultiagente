@@ -12,10 +12,10 @@ public class Agente {
     //ALERT Estos numero luego lees el paper y los pones todos bien.
     private final double distanciaMaxSensor = 1.5;
     private final double distanciaMaxMov = 0.75;
-    private final int numDePasosParaMediarLasTrilateraciones = 2;
-    private final int numTrilateracionesGuardo = 6;
+    private final int numDePasosParaMediarLasTrilateraciones = 15;
+    private final int numTrilateracionesGuardo = 15;
     private final double tamañoAgente = 0.25;
-    private final double radioDeRepulsion = 0.25;
+    private final double radioDeRepulsion = 0.3;
 
     private final Figura figura = new Figura();
 
@@ -24,6 +24,7 @@ public class Agente {
     private Point posicion;
     private List<Point> listaTrilateraciones;
     private Vector vectorMovimiento;
+    public boolean salioFuera;
 
     /**
      * MÉTODOS
@@ -33,9 +34,11 @@ public class Agente {
     //Constructor 2 --- Para crear agentes no perdidos o perdidos. -----------------------------------------------------
     public Agente(boolean perdido, Point posicion, Integer id) {
         this.posicion = posicion;
+        this.salioFuera = false;
         this.perdido = perdido;
         if (perdido) this.posicion = null;
         this.listaTrilateraciones = new ArrayList<>();
+        //for (int i=0; i<numTrilateracionesGuardo; i++){listaTrilateraciones.add(new Point(0.0,0.0));}
         this.vectorMovimiento = new Vector(0.0, 0.0);
         this.id = id;
     }
@@ -67,6 +70,10 @@ public class Agente {
 
     public Figura getFigura() {
         return figura;
+    }
+
+    public boolean getSalidoFuera() {
+        return this.salioFuera;
     }
 
     public Point getPosicion() {
@@ -237,11 +244,13 @@ public class Agente {
         //if (listaTrilateraciones.size()==0) {return new Point (sumX,sumY);}else{
         for (int i = 0; i < listaTrilateraciones.size(); i++) {
             Point nuevo = listaTrilateraciones.get(i);
-            sumX += nuevo.getX();
-            sumY += nuevo.getY();
+            nuevo = Tablero.getInstance().posicionModuloTablero(nuevo);
+            sumX = sumX + nuevo.getX();
+            sumY = sumY + nuevo.getY();
         }
-
-        return new Point(sumX / this.listaTrilateraciones.size(), sumY / this.listaTrilateraciones.size());
+        sumX = sumX/listaTrilateraciones.size();
+        sumY = sumY /listaTrilateraciones.size();
+        return new Point(sumX , sumY );
     }
 
 
@@ -267,31 +276,46 @@ public class Agente {
                 //solTrilateracion = this.gradientDescent(this.posicion, solTrilateracion);
                 this.posicion = solTrilateracion;
                 //todo EGO: esta bien usar add o debria ser push ¿?
+                //int posicionLista = Tablero.getInstance().getEtapa()% numTrilateracionesGuardo;
                 this.listaTrilateraciones.add(solTrilateracion);
                 //if (Tablero.getInstance().getEtapa() % numDePasosParaMediarLasTrilateraciones == 0) {
                 //    this.posicion = mediaTrilateracion();
             } else {
-                // this.posicion = this.trilateracion(tresAgentesCercanosNoPerdidos);
-                // Point solTrilateracion = this.trilateracion(tresAgentesCercanosNoPerdidos);
+                //this.posicion = this.trilateracion(tresAgentesCercanosNoPerdidos);
+                Point solTrilateracion = this.trilateracion(tresAgentesCercanosNoPerdidos);
+                solTrilateracion= Tablero.getInstance().posicionModuloTablero(solTrilateracion);
                 //solTrilateracion = this.gradientDescent(this.posicion, solTrilateracion);
-                //this.posicion = solTrilateracion;
+               // this.posicion = solTrilateracion;
 
-                //this.listaTrilateraciones.add(solTrilateracion);
+                this.listaTrilateraciones.add(solTrilateracion);
             }
 //                tresAgentesCercanosNoPerdidos = tresAgentesDeUnaLista(agentesCercanosNoPerdidos);
 ////                Point punto =
 ////                        this.trilateracion(tresAgentesCercanosNoPerdidos);
 //////                listaTrilateraciones.push(punto);
 ////                this.posicion=punto;
+            if (Tablero.getInstance().getEtapa() % numDePasosParaMediarLasTrilateraciones == 0) {
+                //System.out.println("A ver si e");
+                //System.out.println("Estamos en la etapa:" + Tablero.getInstance().getEtapa());
+                Point trilateracionMEdia = mediaTrilateracion();
+                trilateracionMEdia= Tablero.getInstance().posicionModuloTablero(trilateracionMEdia);
+                System.out.println("Diferencia con la media:");
+                System.out.println(this.listaTrilateraciones.size());
 
+                System.out.println(trilateracionMEdia.sub(this.posicion));
+                this.posicion = trilateracionMEdia;
+
+                this.listaTrilateraciones = new ArrayList<>();
+            }
 //            if (Tablero.getInstance().getEtapa() % numDePasosParaMediarLasTrilateraciones == 0) {
-//                //System.out.println("Estamos en la etapa:" + Tablero.getInstance().getEtapa());
-//                this.posicion = mediaTrilateracion();
-//                this.listaTrilateraciones = new ArrayList<>();
+////                //System.out.println("Estamos en la etapa:" + Tablero.getInstance().getEtapa());
+////                this.posicion = mediaTrilateracion();
+////                this.listaTrilateraciones = new ArrayList<>();
 //////                //todo MAITE, cuando no estan perdidos tambien deberian realizar este ajuste, porque hay fallos,
 //////                // aqui al nno haber fallos pues claro.... no puedo hacerlo porque da errores...
 
-        }
+        }//else{listaTrilateraciones.add(new Point(0.0,0.0));}
+
     }
 
 
@@ -396,6 +420,9 @@ public class Agente {
                     add(
                             new Point(Tablero.getInstance().errorUniforme(this.distanciaMaxMov),
                                     Tablero.getInstance().errorUniforme(this.distanciaMaxMov)));
+            if (!Tablero.getInstance().isDentro(this.posicion)) {
+                this.salioFuera = true;
+            }
             this.posicion = Tablero.getInstance().posicionModuloTablero(this.posicion);
         }
     }

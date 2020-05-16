@@ -28,13 +28,13 @@ public class Main {
             tablero.anadirAgente(false);
         }
         // Agentes perdidos
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 60; i++) {
             tablero.anadirAgente(true);
         }
 
         application.paint(application.getGraphics());
 
-        for (tablero.getEtapa(); tablero.getEtapa() <100; tablero.aumentarEtapa()) {
+        for (tablero.getEtapa(); tablero.getEtapa() <50; tablero.aumentarEtapa()) {
             tablero.getTablero().keySet().forEach(agente -> {
 
                 agente.consensoDeCoordenadas();
@@ -62,6 +62,7 @@ public class Main {
             if (agente.getPosicion() != null) {
                 System.out.println("Diferencia entre las posion real y la del agente:");
                 System.out.println(agente.getPosicion().sub(tablero.getTablero().get(agente)));
+                System.out.println(agente.getSalidoFuera());
 
                 //System.out.println("Posicion x: " + agente.getPosicion().getX());
                 //System.out.println("Posicion y: " + agente.getPosicion().getY());

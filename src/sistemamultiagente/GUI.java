@@ -44,12 +44,20 @@ public class GUI extends JFrame {
 
 
         Tablero.getInstance().getTablero().keySet().forEach(agente -> {
-            if (agente.getPerdido()) {
-                g2d.setPaint(Color.RED);
+            if(agente.getPerdido()){g2d.setPaint(Color.RED);}
+            else if ( agente.getFigura().getCenter().distance(agente.getPosicion())<=agente.getFigura().getRadio() ) {
+                g2d.setPaint(Color.GREEN);
             } else {
-                g2d.setPaint(Color.BLUE);
-            }
-            Point centroAgente = redimensionarizar(Tablero.getInstance().getTablero().get(agente), agente.getTamanoAgente());
+                g2d.setPaint(Color.BLUE);}
+
+                    Point centroAgente;
+            //if(agente.getPosicion()== null){
+            centroAgente = redimensionarizar(
+                   Tablero.getInstance().getTablero().get(agente), agente.getTamanoAgente());
+            //}else{
+              //  centroAgente = redimensionarizar(
+                 //       agente.getPosicion(), agente.getTamanoAgente());
+            //}
             g2d.fill(new Ellipse2D.Double(
                     centroAgente.getX(),
                     centroAgente.getY(),

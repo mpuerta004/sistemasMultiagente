@@ -56,4 +56,19 @@ public class Point {
         return String.format(" X= %f, Y = %f ", this.getX(), this.getY());
     }
 
+    public int before(Point other) {
+        if (this.getX() == other.getX()) {
+            if(this.getY() == other.getY()){
+                return 0;
+            }else if(this.getY() > other.getY()){
+                return -1;
+            }else{
+                return 1;
+            }
+        } else if(this.getX() < other.getX()){
+            return -1;
+        }else{
+            return 1;
+        }
+    }
 }

@@ -3,6 +3,7 @@ package sistemamultiagente;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Tablero {
@@ -100,7 +101,7 @@ public class Tablero {
     //Da un true si la posicion que se quiere meter el agente proboca que un agente tenga que estar encima de otro.
     private boolean conflictos(Point point) {
         Optional<Agente> agenteConflicto = tablero.keySet().stream()
-                .filter(agenteTablero -> tablero.get(agenteTablero).distance(point) <= 2 * agenteTablero.getTamanoAgente())
+                .filter(agenteTablero -> tablero.get(agenteTablero).distance(point) <=  agenteTablero.getTamanoAgente())
                 .findAny();
         return agenteConflicto.isPresent();
     }
@@ -143,25 +144,26 @@ public class Tablero {
     //con un error que debo añadir cuando. CUIDADO como es la real lo hhago con la del tablero y le doy la sol
     //con el error al agente.
     public double sensorAgente(Agente agente1, Agente agente2) {
-        return distanciaRealEuclideaPosicionesAgente(agente1, agente2)+ 0.02* errorUniforme(agente1.getDistanciaMaxSensor());
+        return distanciaRealEuclideaPosicionesAgente(agente1, agente2)+  errorUniforme(agente1.getDistanciaMaxSensor());
     }
 
     //todo MAITE:
     public double errorUniforme(double distanciaMaxMovoSensor) {
-      if (Math.random() < 0.5) {
-            return Math.random() * distanciaMaxMovoSensor;
-
-        } else {
-            return -Math.random() * distanciaMaxMovoSensor;}}
+        //Double  h= new Random().nextGaussian();
+return 0.0;}
+//    if (Math.random() < 0.5) {
+//
+//            return Math.random()* distanciaMaxMovoSensor;
+//
+//        } else {
+//            return - Math.random() * distanciaMaxMovoSensor;}}
 
 
     //redInalambrica:
     //Simula la red inalambrica que tienen los agentes, por lo que devuelve la poscion
     // que el agente le enviaria mediante esa red.
     public Point redInalambrica(Agente agente2) {
-        return agente2.getPosicion()
-
-                ;
+        return agente2.getPosicion();
     }
 
     //actualizarPosicion:
@@ -189,16 +191,20 @@ public class Tablero {
         double posicionY = nuevaPosicion.getY();
         if (!this.isDentro(nuevaPosicion)) {
             while (posicionX < 0.0) {
-                posicionX = this.ejeXMaximo + posicionX;
+                posicionX = 0.0;
+                        //this.ejeXMaximo + posicionX;
             }
             while (posicionX > this.ejeXMaximo) {
-                posicionX = posicionX - this.ejeXMaximo;
+                posicionX = this.ejeXMaximo;
+                        //posicionX - this.ejeXMaximo;
             }
             while (posicionY < 0.0) {
-                posicionY = this.ejeYmaximo + posicionY;
+                posicionY = 0.0;
+                        //this.ejeYmaximo + posicionY;
             }
             while (posicionY > this.ejeYmaximo) {
-                posicionY = posicionY - this.ejeYmaximo;
+                posicionY = this.ejeYmaximo;
+                        //posicionY - this.ejeYmaximo;
             }
             nuevaPosicion = new Point(posicionX, posicionY);
         }

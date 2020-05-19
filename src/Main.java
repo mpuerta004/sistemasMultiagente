@@ -22,20 +22,28 @@ public class Main {
         double EjeYmaximo = tablero.getEjeYmaximo();
         GUI application = new GUI(EjeXMaximo, EjeYmaximo);
 
-        //application.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //application.setDefaultCloseperation(JFrame.EXIT_ON_CLOSE);
         //Agentes no perdidos
-        for (int i = 0; i < 40; i++) {
+        for (int i = 0; i < 50; i++) {
             tablero.anadirAgente(false);
         }
         // Agentes perdidos
-        for (int i = 0; i < 120; i++) {
+        for (int i = 0; i < 100; i++) {
             tablero.anadirAgente(true);
         }
 
         application.paint(application.getGraphics());
 
-        for (tablero.getEtapa(); tablero.getEtapa() <100; tablero.aumentarEtapa()) {
-            tablero.getTablero().keySet().forEach(agente -> {
+        for (tablero.getEtapa(); tablero.getEtapa() <150; tablero.aumentarEtapa()) {
+            //tablero.getTablero()
+//                    .entrySet()
+//                    .stream()
+//                    .sorted((e1, e2)-> e1.getValue().before(e2.getValue()))
+//                    .map(e->e.getKey())
+//                    .forEach(agente ->{
+//
+////                    });
+          tablero.getTablero().keySet().forEach(agente -> {
 
                 agente.consensoDeCoordenadas();
                 // System.out.println("Calcular las coordenadas");
@@ -54,28 +62,29 @@ public class Main {
             }
 
         }
-        AtomicInteger contador44 = new AtomicInteger();
-        tablero.getTablero().keySet().forEach(agente -> {
-            System.out.println("Agente ......................................................................");
-            //System.out.println("Posicion del agente:");
-            System.out.println(agente.getListaTrilateraciones());
-            if (agente.getPosicion() != null) {
-                System.out.println("Diferencia entre las posion real y la del agente:");
-                System.out.println(agente.getPosicion().sub(tablero.getTablero().get(agente)));
+       AtomicInteger contador44 = new AtomicInteger();
+                tablero.getTablero().keySet().forEach(agente -> {
+                    System.out.println("Agente ......................................................................");
+                    //System.out.println("Posicion del agente:");
+                    System.out.println(agente.getListaTrilateraciones());
+                    if (agente.getPosicion() != null) {
+                        System.out.println("Diferencia entre las posion real y la del agente:");
+                       System.out.println(agente.getPosicion().sub(tablero.getTablero().get(agente)));
 
-                //System.out.println("Posicion x: " + agente.getPosicion().getX());
-                //System.out.println("Posicion y: " + agente.getPosicion().getY());
-                //System.out.println("Si esta dentro con la posicion que cree el agente: " + tablero.isDentro(agente.getPosicion()));
+                        System.out.println("Posicion x: " + agente.getPosicion().getX());
+                System.out.println("Posicion y: " + agente.getPosicion().getY());
+                System.out.println("Si esta dentro con la posicion que cree el agente: " + tablero.isDentro(agente.getPosicion()));
             } else {
                 contador44.set(contador44.get() + 1);
                 System.out.println("Posicion:  NULL");
 
             }
-            //System.out.println("Posicion Del agente real");
-            //System.out.println("Posicion real:" + tablero.getTablero().get(agente));
+            System.out.println("Posicion Del agente real");
+            System.out.println("Posicion real:" + tablero.getTablero().get(agente));
 
-            //System.out.println("Si esta dentro con la posicion del tablero: " + tablero.isDentro(tablero.getTablero().get(agente)));
-        });
+            System.out.println("Si esta dentro con la posicion del tablero: " + tablero.isDentro(tablero.getTablero().get(agente)));
+        }
+        );
         System.out.println("Cueston estas perdidos:" + contador44);
 
 

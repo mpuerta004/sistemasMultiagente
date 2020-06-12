@@ -40,32 +40,34 @@ public class GUI extends JFrame {
         Figura figura = new Figura();
         Point centroFigura = redimensionarizar(figura.getCenter(), 2 * figura.getRadio());
         g2d.setPaint(Color.BLACK);
-        g2d.fill(new Ellipse2D.Double(centroFigura.getX(), centroFigura.getY(), 2 * figura.getRadio() * 15, 2 * figura.getRadio() *15));
+        g2d.fill(new Ellipse2D.Double(centroFigura.getX(), centroFigura.getY(), 2 * figura.getRadio() * 15, 2 * figura.getRadio() * 15));
 
 
         Tablero.getInstance().getTablero().keySet().forEach(agente -> {
-            if(agente.getPerdido()){g2d.setPaint(Color.RED);}
-            else if ( agente.getFigura().getCenter().distance(agente.getPosicion())<=agente.getFigura().getRadio() ) {
-                g2d.setPaint(Color.GREEN);
-            } else {
-                g2d.setPaint(Color.BLUE);}
+                    if (agente.getPerdido()) {
+                        g2d.setPaint(Color.RED);
+                    } else if (agente.getFigura().getCenter().distance(agente.getPosicion()) <= agente.getFigura().getRadio()) {
+                        g2d.setPaint(Color.GREEN);
+                    } else {
+                        g2d.setPaint(Color.BLUE);
+                    }
 
                     Point centroAgente;
-            //if(agente.getPosicion()== null){
-            centroAgente = redimensionarizar(
-                   Tablero.getInstance().getTablero().get(agente), agente.getTamanoAgente());
-            //}else{
-              //  centroAgente = redimensionarizar(
-                 //       agente.getPosicion(), agente.getTamanoAgente());
-            //}
-            g2d.fill(new Ellipse2D.Double(
-                    centroAgente.getX(),
-                    centroAgente.getY(),
-                    (agente.getTamanoAgente() * 15),
-                    (agente.getTamanoAgente() * 15)));
-            g2d.drawString( agente.getId()+ "", Float.parseFloat(centroAgente.getX()+""),
-                    Float.parseFloat(centroAgente.getY()+""));
-        }
+                    //if(agente.getPosicion()== null){
+                    centroAgente = redimensionarizar(
+                            Tablero.getInstance().getTablero().get(agente), agente.getTamanoAgente());
+                    //}else{
+                    //  centroAgente = redimensionarizar(
+                    //       agente.getPosicion(), agente.getTamanoAgente());
+                    //}
+                    g2d.fill(new Ellipse2D.Double(
+                            centroAgente.getX(),
+                            centroAgente.getY(),
+                            (agente.getTamanoAgente() * 15),
+                            (agente.getTamanoAgente() * 15)));
+                    g2d.drawString(agente.getId() + "", Float.parseFloat(centroAgente.getX() + ""),
+                            Float.parseFloat(centroAgente.getY() + ""));
+                }
 
         );
 

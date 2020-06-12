@@ -6,8 +6,8 @@ public class Figura {
      * Atributos
      */
 
-    private final double radio = 15.0;
-    private final Point center = new Point(25.0, 25.0);
+    private final double radio = 10.0;
+    private final Point center = new Point(20.0, 20.0);
     private final Circle figura;
 
     /**

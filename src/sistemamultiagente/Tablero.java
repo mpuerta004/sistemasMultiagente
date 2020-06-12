@@ -15,8 +15,8 @@ public class Tablero {
     private static Tablero myInstance;
     private HashMap<Agente, Point> tablero;
     private int etapa;
-    private final double ejeYmaximo = 50.0;
-    private final double ejeXMaximo = 50.0;
+    private final double ejeYmaximo = 40.0;
+    private final double ejeXMaximo = 40.0;
 
     /**
      * MÉTODOS
@@ -144,19 +144,21 @@ public class Tablero {
     //con un error que debo añadir cuando. CUIDADO como es la real lo hhago con la del tablero y le doy la sol
     //con el error al agente.
     public double sensorAgente(Agente agente1, Agente agente2) {
-        return distanciaRealEuclideaPosicionesAgente(agente1, agente2)+  errorUniforme(agente1.getDistanciaMaxSensor());
+        double error = errorUniforme(agente1.getDistanciaMaxSensor());
+        //System.out.println("Error añadido al sensor: "+ error*0.003);
+        return (distanciaRealEuclideaPosicionesAgente(agente1, agente2)+  .035*error);
     }
 
     //todo MAITE:
     public double errorUniforme(double distanciaMaxMovoSensor) {
         //Double  h= new Random().nextGaussian();
-return 0.0;}
-//    if (Math.random() < 0.5) {
-//
-//            return Math.random()* distanciaMaxMovoSensor;
-//
-//        } else {
-//            return - Math.random() * distanciaMaxMovoSensor;}}
+//return 0.0;}
+    if (Math.random() < 0.5) {
+
+            return Math.random()* distanciaMaxMovoSensor;
+
+        } else {
+            return - Math.random() * distanciaMaxMovoSensor;}}
 
 
     //redInalambrica:
@@ -200,11 +202,11 @@ return 0.0;}
             }
             while (posicionY < 0.0) {
                 posicionY = 0.0;
-                        //this.ejeYmaximo + posicionY;
+                       // this.ejeYmaximo + posicionY;
             }
             while (posicionY > this.ejeYmaximo) {
                 posicionY = this.ejeYmaximo;
-                        //posicionY - this.ejeYmaximo;
+                       // posicionY - this.ejeYmaximo;
             }
             nuevaPosicion = new Point(posicionX, posicionY);
         }

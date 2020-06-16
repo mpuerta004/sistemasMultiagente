@@ -15,8 +15,6 @@ public class Tablero {
     private static Tablero myInstance;
     private HashMap<Agente, Point> tablero;
     private int etapa;
-    private final double ejeYmaximo = 40.0;
-    private final double ejeXMaximo = 40.0;
 
     /**
      * MÉTODOS
@@ -37,13 +35,7 @@ public class Tablero {
     }
 
     //Funciones get atributos del tablero. -----------------------------------------------------------------------------
-    public double getEjeYmaximo() {
-        return ejeYmaximo;
-    }
 
-    public double getEjeXMaximo() {
-        return ejeXMaximo;
-    }
 
     public int getEtapa() {
         return etapa;
@@ -77,21 +69,23 @@ public class Tablero {
     private Point primeraCoordenadaAgenteTablero(Boolean perdido) {
         double posicionX;
         double posicionY;
+        double ejeYMaximo = Constants.EJE_Y_MAXIMO;
+        double ejeXMaximo = Constants.EJE_X_MAXIMO;
         if (perdido) {
             posicionX = Math.random() * ejeXMaximo;
-            posicionY = Math.random() * ejeYmaximo;
+            posicionY = Math.random() * ejeYMaximo;
         } else {
             if (Math.random() < 0.5) {
-                posicionX = this.getEjeXMaximo() / 2 + Math.random() * (this.ejeYmaximo / 3) / 2;
+                posicionX = ejeXMaximo / 2 + Math.random() * (ejeYMaximo / 3) / 2;
             } else {
 
-                posicionX = this.getEjeXMaximo() / 2 - Math.random() * (this.ejeYmaximo / 3) / 2;
+                posicionX = ejeXMaximo / 2 - Math.random() * (ejeYMaximo / 3) / 2;
             }
             if (Math.random() < 0.5) {
-                posicionY = this.getEjeXMaximo() / 2 + (Math.random() * (this.ejeYmaximo / 3) / 2);
+                posicionY = ejeXMaximo / 2 + (Math.random() * (ejeYMaximo / 3) / 2);
             } else {
 
-                posicionY = this.getEjeYmaximo() / 2 - Math.random() * ((this.ejeYmaximo / 3) / 2);
+                posicionY = ejeYMaximo / 2 - Math.random() * ((ejeYMaximo / 3) / 2);
             }
         }
         return new Point(posicionX, posicionY);
@@ -101,7 +95,7 @@ public class Tablero {
     //Da un true si la posicion que se quiere meter el agente proboca que un agente tenga que estar encima de otro.
     private boolean conflictos(Point point) {
         Optional<Agente> agenteConflicto = tablero.keySet().stream()
-                .filter(agenteTablero -> tablero.get(agenteTablero).distance(point) <=  agenteTablero.getTamanoAgente())
+                .filter(agenteTablero -> tablero.get(agenteTablero).distance(point) <= Constants.TAMAÑO_AGENTE)
                 .findAny();
         return agenteConflicto.isPresent();
     }
@@ -123,7 +117,7 @@ public class Tablero {
     // sensor(distanciaMaxSensor).
     private List<Agente> agentesCercanos(Agente agente) {
         double distanciaMaxSensor;
-        distanciaMaxSensor = agente.getDistanciaMaxSensor();
+        distanciaMaxSensor = Constants.DISCANCIA_MAX_SENSOR;
         return tablero.keySet().stream().filter(agenteCercano ->
                 distanciaRealEuclideaPosicionesAgente(agenteCercano, agente) <
                         distanciaMaxSensor && !agenteCercano.equals(agente)).collect(Collectors.toList());
@@ -144,22 +138,19 @@ public class Tablero {
     //con un error que debo añadir cuando. CUIDADO como es la real lo hhago con la del tablero y le doy la sol
     //con el error al agente.
     public double sensorAgente(Agente agente1, Agente agente2) {
-        double error = errorUniforme(agente1.getDistanciaMaxSensor());
-        //System.out.println("Error añadido al sensor: "+ error*0.003);
-        return (distanciaRealEuclideaPosicionesAgente(agente1, agente2)+  .035*error);
+        double error = errorUniforme(Constants.DISCANCIA_MAX_SENSOR);
+        return (distanciaRealEuclideaPosicionesAgente(agente1, agente2) + 0.35 * error);
     }
 
     //todo MAITE:
     public double errorUniforme(double distanciaMaxMovoSensor) {
-        //Double  h= new Random().nextGaussian();
-//return 0.0;}
-    if (Math.random() < 0.5) {
-
-            return Math.random()* distanciaMaxMovoSensor;
-
-        } else {
-            return - Math.random() * distanciaMaxMovoSensor;}}
-
+//        if (Math.random() < 0.5) {
+//            return Math.random() * distanciaMaxMovoSensor;
+//        } else {
+//            return -Math.random() * distanciaMaxMovoSensor;
+//        }
+//    }
+        return 0.0;}
 
     //redInalambrica:
     //Simula la red inalambrica que tienen los agentes, por lo que devuelve la poscion
@@ -175,11 +166,11 @@ public class Tablero {
     // posicion, para lo cual realizare otro calculo del vector de movimiento.
     //Por ultimo le dice al agente que tambien actualice su posicion.
     public void actualizarPosiciones(Agente agente) {
-        Point posicionAntigua= tablero.get(agente);
+        Point posicionAntigua = tablero.get(agente);
         Point nuevaPosicion = posicionModuloTablero(tablero.get(agente).add(agente.getVectorMovimiento()));
         //todo EGO: creo que hay formas mejores de hacer esto
-       tablero.put(agente, new Point(ejeXMaximo*1000,ejeYmaximo*1000));
-        while(conflictos(nuevaPosicion)){
+        tablero.put(agente, new Point(Constants.EJE_X_MAXIMO * 1000, Constants.EJE_Y_MAXIMO * 1000));
+        while (conflictos(nuevaPosicion)) {
             agente.calcularVectorMovimiento();
             nuevaPosicion = posicionAntigua.add(agente.getVectorMovimiento());
         }
@@ -191,22 +182,24 @@ public class Tablero {
     public Point posicionModuloTablero(Point nuevaPosicion) {
         double posicionX = nuevaPosicion.getX();
         double posicionY = nuevaPosicion.getY();
+        double ejeXMaximo = Constants.EJE_X_MAXIMO;
+        double ejeYMaximo = Constants.EJE_Y_MAXIMO;
         if (!this.isDentro(nuevaPosicion)) {
             while (posicionX < 0.0) {
                 posicionX = 0.0;
-                        //this.ejeXMaximo + posicionX;
+                //this.ejeXMaximo + posicionX;
             }
-            while (posicionX > this.ejeXMaximo) {
-                posicionX = this.ejeXMaximo;
-                        //posicionX - this.ejeXMaximo;
+            while (posicionX > ejeXMaximo) {
+                posicionX = ejeXMaximo;
+                //posicionX - this.ejeXMaximo;
             }
             while (posicionY < 0.0) {
                 posicionY = 0.0;
-                       // this.ejeYmaximo + posicionY;
+                // this.ejeYmaximo + posicionY;
             }
-            while (posicionY > this.ejeYmaximo) {
-                posicionY = this.ejeYmaximo;
-                       // posicionY - this.ejeYmaximo;
+            while (posicionY > ejeYMaximo) {
+                posicionY = ejeYMaximo;
+                // posicionY - this.ejeYMaximo;
             }
             nuevaPosicion = new Point(posicionX, posicionY);
         }
@@ -218,7 +211,7 @@ public class Tablero {
     public boolean isDentro(Point point) {
         double posicionX = point.getX();
         double posicionY = point.getY();
-        if (0.0 <= posicionX && posicionX <= this.ejeXMaximo && 0.0 <= posicionY && posicionY <= this.ejeYmaximo) {
+        if (0.0 <= posicionX && posicionX <= Constants.EJE_X_MAXIMO && 0.0 <= posicionY && posicionY <= Constants.EJE_Y_MAXIMO) {
             return true;
         } else {
             return false;

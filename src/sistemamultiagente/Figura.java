@@ -1,13 +1,14 @@
 package sistemamultiagente;
 
+import sim.field.continuous.Continuous2D;
+
 public class Figura {
 
     /**
      * Atributos
      */
 
-    private final double radio = 10.0;
-    private final Point center = new Point(20.0, 20.0);
+
     private final Circle figura;
 
     /**
@@ -15,15 +16,7 @@ public class Figura {
      */
 
     public Figura() {
-        figura = new Circle(center, radio);
-    }
-
-    public Point getCenter() {
-        return this.center;
-    }
-
-    public double getRadio() {
-        return this.radio;
+        figura = new Circle(Constants.CENTER, Constants.RADIO);
     }
 
     public boolean isDentroFigura(Point point) {

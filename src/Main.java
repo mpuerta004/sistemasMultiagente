@@ -1,13 +1,9 @@
-import sistemamultiagente.Agente;
-import sistemamultiagente.Figura;
-import sistemamultiagente.Tablero;
+import sistemamultiagente.*;
 
 import javax.swing.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
-import sistemamultiagente.GUI;
 
 public class Main {
 
@@ -18,23 +14,23 @@ public class Main {
 
     private void execute() {
         Tablero tablero = Tablero.getInstance();
-        double EjeXMaximo = tablero.getEjeXMaximo();
-        double EjeYmaximo = tablero.getEjeYmaximo();
+        double EjeXMaximo = Constants.EJE_X_MAXIMO;
+        double EjeYmaximo = Constants.EJE_Y_MAXIMO;
         GUI application = new GUI(EjeXMaximo, EjeYmaximo);
 
         //application.setDefaultCloseperation(JFrame.EXIT_ON_CLOSE);
         //Agentes no perdidos
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 15; i++) {
             tablero.anadirAgente(false);
         }
         // Agentes perdidos
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             tablero.anadirAgente(true);
         }
 
         application.paint(application.getGraphics());
 
-        for (tablero.getEtapa(); tablero.getEtapa() < 500; tablero.aumentarEtapa()) {
+        for (tablero.getEtapa(); tablero.getEtapa() < 1001; tablero.aumentarEtapa()) {
 
             tablero.getTablero().keySet().forEach(agente -> {
 
@@ -45,10 +41,10 @@ public class Main {
 
             }
             );
-            System.out.println("Etapa" + tablero.getEtapa());
+            //System.out.println("Etapa" + tablero.getEtapa());
             application.update(application.getGraphics());
             try {
-                Thread.sleep(1 * 100);
+                Thread.sleep(1 * 50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

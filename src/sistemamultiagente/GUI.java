@@ -9,109 +9,58 @@ import java.awt.image.BufferedImage;
 
 public class GUI extends JFrame {
 
-    // set window's title bar String and dimensions
     public GUI(double width, double height) {
-        //
-        // JFrame GUI = new JFrame();
         super("Sistema Multiagente");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //JPanel panel = new JPanel();
-        //panel.setBorder(BorderFactory.createEmptyBorder((int) width*70,(int) width*70,(int) width*70,(int) width*70));
-        setSize((int) width * 20, (int) height * 20);
-        //panel.setLayout(new GridLayout(0,1));
-        //GUI.add(panel, BorderLayout.CENTER);
-        //GUI.getContentPane().add((PopupMenu) BorderFactory.createEmptyBorder((int) width*70,(int) width*70,(int) width*70,(int) width*70));
-        //BorderFactory.createEmptyBorder((int) width*70,(int) width*70,(int) width*70,(int) width*70)));
-        //setTitle("Sistema multiganete");
-        getContentPane().setBackground(Color.gray);
-
+        setSize((int) width *15+100, (int) height * 15+100);
+        getContentPane().setBackground(Color.darkGray);
         setVisible(true);
 
     }
 
-
-    // draw shapes with Java2D API
     public void paint(Graphics g) {
         super.paint(g);
-        //super.paint(g); // call superclass's paint method
-        Graphics2D g2d = (Graphics2D) g; // cast g to Graphics2D
-        // draw 2D ellipse filled with a blue-yellow gradient
-
+        Graphics2D g2d = (Graphics2D) g;
+        //dibujo bordes para que se vea el cuadrado donde se mueven los agentes.
+        g2d.setPaint(Color.GRAY);
+        g2d.fill(new Rectangle2D.Double(0.0,0.0,  50,1000));
+        g2d.setPaint(Color.GRAY);
+        g2d.fill(new Rectangle2D.Double(0.0,0.0,  10000,50));
+        g2d.setPaint(Color.GRAY);
+        g2d.fill(new Rectangle2D.Double(50+(Constants.EJE_X_MAXIMO)*15.0,0.0,  50,500));
+        g2d.setPaint(Color.GRAY);
+        g2d.fill(new Rectangle2D.Double(0.0,50+(Constants.EJE_Y_MAXIMO)*15.0,  500,50));
+        //dibujo la figura
         Figura figura = new Figura();
-        Point centroFigura = redimensionarizar(figura.getCenter(), 2 * figura.getRadio());
-        g2d.setPaint(Color.BLACK);
-        g2d.fill(new Ellipse2D.Double(centroFigura.getX(), centroFigura.getY(), 2 * figura.getRadio() * 15, 2 * figura.getRadio() * 15));
-
-
+        Point centroFigura = redimensionarizar(Constants.CENTER, 2 * Constants.RADIO);
+        g2d.setPaint(Color.GRAY);
+        g2d.fill(new Ellipse2D.Double(centroFigura.getX()*15+50, 50+centroFigura.getY()*15, 2 * Constants.RADIO * 15, 2 * Constants.RADIO * 15));
+        //Dibujar los agentes en la posicion en la que estan.
         Tablero.getInstance().getTablero().keySet().forEach(agente -> {
                     if (agente.getPerdido()) {
                         g2d.setPaint(Color.RED);
-                    } else if (agente.getFigura().getCenter().distance(agente.getPosicion()) <= agente.getFigura().getRadio()) {
+                    } else if (Constants.CENTER.distance(agente.getPosicion()) <= Constants.RADIO) {
                         g2d.setPaint(Color.GREEN);
                     } else {
                         g2d.setPaint(Color.BLUE);
                     }
 
                     Point centroAgente;
-                    //if(agente.getPosicion()== null){
                     centroAgente = redimensionarizar(
-                            Tablero.getInstance().getTablero().get(agente), agente.getTamanoAgente());
-                    //}else{
-                    //  centroAgente = redimensionarizar(
-                    //       agente.getPosicion(), agente.getTamanoAgente());
-                    //}
+                            Tablero.getInstance().getTablero().get(agente), Constants.TAMAÑO_AGENTE);
                     g2d.fill(new Ellipse2D.Double(
-                            centroAgente.getX(),
-                            centroAgente.getY(),
-                            (agente.getTamanoAgente() * 15),
-                            (agente.getTamanoAgente() * 15)));
-                    g2d.drawString(agente.getId() + "", Float.parseFloat(centroAgente.getX() + ""),
-                            Float.parseFloat(centroAgente.getY() + ""));
+                            centroAgente.getX()*15+50,
+                            centroAgente.getY()*15+50,
+                            (Constants.TAMAÑO_AGENTE * 15),
+                            (Constants.TAMAÑO_AGENTE * 15)));
+//                    g2d.drawString(agente.getId() + "", Float.parseFloat(centroAgente.getX()+50 + ""),
+//                            Float.parseFloat(centroAgente.getY()+50+ ""));
                 }
-
         );
-
-        // draw 2D rectangle in red
-
-//        g2d.setStroke(new BasicStroke(10.0f));
-//        g2d.draw(new Rectangle2D.Double(80, 30, 65, 100));
-//
-//        // draw 2D rounded rectangle with a buffered background
-//        BufferedImage buffImage = new BufferedImage(10, 10,
-//                BufferedImage.TYPE_INT_RGB);
-//        Graphics2D gg = buffImage.createGraphics();
-//        gg.setColor(Color.YELLOW); // draw in yellow
-//        gg.fillRect(0, 0, 10, 10); // draw a filled rectangle
-//        gg.setColor(Color.BLACK); // draw in black
-//        gg.drawRect(1, 1, 6, 6); // draw a rectangle
-//        gg.setColor(Color.BLUE); // draw in blue
-//        gg.fillRect(1, 1, 3, 3); // draw a filled rectangle
-//        gg.setColor(Color.RED); // draw in red
-//        gg.fillRect(4, 4, 3, 3); // draw a filled rectangle
-//
-//        // paint buffImage onto the JFrame
-//        g2d.setPaint( new TexturePaint( buffImage,
-//                new Rectangle( 10, 10 ) ) );
-//        g2d.fill( new RoundRectangle2D.Double( 155, 30, 75, 100, 50, 50 ) );
-//         // draw 2D pie-shaped arc in white
-//         g2d.setPaint( Color.WHITE );
-//         g2d.setStroke( new BasicStroke( 6.0f ) );
-//         g2d.draw( new Arc2D.Double( 240, 30, 75, 100, 0, 270, Arc2D.PIE ) );
-//
-//         // draw 2D lines in green and yellow
-//         g2d.setPaint( Color.GREEN );
-//         g2d.draw( new Line2D.Double( 395, 30, 320, 150 ) );
-//
-//         float dashes[] = { 10 };
-//
-//         g2d.setPaint( Color.YELLOW );
-//         g2d.setStroke( new BasicStroke( 4, BasicStroke.CAP_ROUND,
-//         BasicStroke.JOIN_ROUND, 10, dashes, 0 ) );
-//         g2d.draw( new Line2D.Double( 320, 30, 395, 150 ) );
-
-    } // end method paint
-
+    }
+    // redimensionar:
+    // Le das el tamaño (DIAMETRO) y ek centro te calcula el punto de arriba a la izquierza para que sepa dibujarlo.
     private Point redimensionarizar(Point point, double tamano) {
-        return point.sub(new Point(tamano / 2, tamano / 2)).scale(15);
+        return point.sub(new Point(tamano / 2, tamano / 2));
     }
 }

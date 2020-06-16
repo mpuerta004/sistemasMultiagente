@@ -241,8 +241,10 @@ public class Agente {
             this.posicion = solTrilateracion;
             Point solTrilateracion2 = this.trilateracion(agentesCercanosNoPerdidos);
             this.posicion = solTrilateracion2;
+            Point solTrilateracion3= this.trilateracion(agentesCercanosNoPerdidos);
+            this.posicion = solTrilateracion3;
             System.out.println("Trilateracion" + this.posicion.distance(Tablero.getInstance().getTablero().get(this)));
-            this.listaTrilateraciones.add(solTrilateracion2);
+            this.listaTrilateraciones.add(solTrilateracion3);
         }
         if (Tablero.getInstance().getEtapa() % Constants.NUM_DE_PASOS_PARa_MEDIAR_LASTRILATERACIONES == 0) {
             if (listaTrilateraciones.size() >= 1) {
@@ -311,7 +313,7 @@ public class Agente {
             vectorMovimiento = vectorMovimiento.scale(Constants.DISTANCIA_MAX_MOV);
         }
         //System.out.println("Vector mov dentro:" + vectorMovimiento.toString() + " ID: " + this.getId()+ " modulo "+ modulo);
-        while (Constants.CENTER.distance(this.posicion.add(vectorMovimiento))>= Constants.RADIO) {
+        while (Constants.CENTER.distance(this.posicion.add(vectorMovimiento)) >= Constants.RADIO) {
             double r1 = Math.random();
 
             if (r1 < 0.75) {

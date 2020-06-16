@@ -20,17 +20,17 @@ public class Main {
 
         //application.setDefaultCloseperation(JFrame.EXIT_ON_CLOSE);
         //Agentes no perdidos
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 8; i++) {
             tablero.anadirAgente(false);
         }
         // Agentes perdidos
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 15; i++) {
             tablero.anadirAgente(true);
         }
 
         application.paint(application.getGraphics());
 
-        for (tablero.getEtapa(); tablero.getEtapa() < 1001; tablero.aumentarEtapa()) {
+        for (tablero.getEtapa(); tablero.getEtapa() < 1501; tablero.aumentarEtapa()) {
 
             tablero.getTablero().keySet().forEach(agente -> {
 

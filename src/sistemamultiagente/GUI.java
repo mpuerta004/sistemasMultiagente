@@ -27,9 +27,9 @@ public class GUI extends JFrame {
         g2d.setPaint(Color.GRAY);
         g2d.fill(new Rectangle2D.Double(0.0,0.0,  10000,50));
         g2d.setPaint(Color.GRAY);
-        g2d.fill(new Rectangle2D.Double(50+(Constants.EJE_X_MAXIMO)*15.0,0.0,  50,500));
+        g2d.fill(new Rectangle2D.Double(50+(Constants.EJE_X_MAXIMO)*15.0,0.0,  50,500000));
         g2d.setPaint(Color.GRAY);
-        g2d.fill(new Rectangle2D.Double(0.0,50+(Constants.EJE_Y_MAXIMO)*15.0,  500,50));
+        g2d.fill(new Rectangle2D.Double(0.0,50+(Constants.EJE_Y_MAXIMO)*15.0,  5000000,50));
         //dibujo la figura
         Figura figura = new Figura();
         Point centroFigura = redimensionarizar(Constants.CENTER, 2 * Constants.RADIO);
@@ -53,8 +53,8 @@ public class GUI extends JFrame {
                             centroAgente.getY()*15+50,
                             (Constants.TAMAÑO_AGENTE * 15),
                             (Constants.TAMAÑO_AGENTE * 15)));
-//                    g2d.drawString(agente.getId() + "", Float.parseFloat(centroAgente.getX()+50 + ""),
-//                            Float.parseFloat(centroAgente.getY()+50+ ""));
+//                    g2d.drawString(agente.getId() + "", Float.parseFloat(centroAgente.getX()*15+50 + ""),
+//                            Float.parseFloat(centroAgente.getY()*15+50+ ""));
                 }
         );
     }

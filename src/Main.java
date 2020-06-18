@@ -2,6 +2,7 @@ import sistemamultiagente.*;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -20,17 +21,17 @@ public class Main {
 
         //application.setDefaultCloseperation(JFrame.EXIT_ON_CLOSE);
         //Agentes no perdidos
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 15; i++) {
             tablero.anadirAgente(false);
         }
         // Agentes perdidos
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 50; i++) {
             tablero.anadirAgente(true);
         }
 
         application.paint(application.getGraphics());
 
-        for (tablero.getEtapa(); tablero.getEtapa() < 1501; tablero.aumentarEtapa()) {
+        for (tablero.getEtapa(); tablero.getEtapa() < 2001; tablero.aumentarEtapa()) {
 
             tablero.getTablero().keySet().forEach(agente -> {
 
@@ -39,34 +40,52 @@ public class Main {
                 tablero.actualizarPosiciones(agente);
 
 
+            });
+            if (Tablero.getInstance().getEtapa() % Constants.NUM_DE_PASOS_PARa_MEDIAR_LASTRILATERACIONES == 0) {
+                System.out.println("MEdia de trilateraciones"+ Tablero.getInstance().getEtapa()) ;
             }
-            );
+
+
             //System.out.println("Etapa" + tablero.getEtapa());
             application.update(application.getGraphics());
             try {
-                Thread.sleep(1 * 50);
+                Thread.sleep(1 * 20);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
         }
 
-        for (Agente agente : tablero.getTablero().keySet()) {
-            if(!agente.getPerdido()){
-            if (agente.getPosicion().sub(tablero.getTablero().get(agente)).getX() != 0.0 ||
-                    agente.getPosicion().sub(tablero.getTablero().get(agente)).getY() != 0.0) {
-                System.out.println(" Error en agente con id " + agente.getId()+ " ERROR:----------->>>>> "+  agente.getPosicion().sub(Tablero.getInstance().getTablero().get(agente) ));
-               System.out.println("Posicion del agente:" + agente.getPosicion());
-                System.out.println("Posicion real del agente: " + Tablero.getInstance().getTablero().get(agente));
-                if (agente.getId() <= 3) {
-                    System.out.println("Inicialmente: NO PERDIDO");
-                } else {
-                    System.out.println("Inicialmente:  PERDIDO");
-                }
-            }}else{
-                System.out.println("El agente no ha encontrado coordenadas: "+ agente.getId());
-            }}
 
+        for (Agente agente : tablero.getTablero().keySet()) {
+            if (!agente.getPerdido()) {
+                if (agente.getPosicion().sub(tablero.getTablero().get(agente)).getX() != 0.0 ||
+                        agente.getPosicion().sub(tablero.getTablero().get(agente)).getY() != 0.0) {
+                    System.out.println(" Error en agente con id " + agente.getId() + " ERROR:----------->>>>> " + agente.getPosicion().sub(Tablero.getInstance().getTablero().get(agente)));
+                    System.out.println("Posicion del agente:" + agente.getPosicion());
+                    System.out.println("Posicion real del agente: " + Tablero.getInstance().getTablero().get(agente));
+                    if (agente.getId() <= 3) {
+                        System.out.println("Inicialmente: NO PERDIDO");
+                    } else {
+                        System.out.println("Inicialmente:  PERDIDO");
+                    }
+                }
+            } else {
+                System.out.println("El agente no ha encontrado coordenadas: " + agente.getId());
+            }
+        }
+        System.out.println("TRILATERACIONES BIEN ECHAS: " + Constants.COUNTBIEN );
+        System.out.println("Trilateraciones MALL echas: "+ Constants.COUNTMAL);
+        System.out.println("___________________________________");
+
+        System.out.println( "COUNT_MULX_PRIMERO: "+ Constants.COUNT_MULX_PRIMERO);
+        System.out.println( "COUNT_MULX_SEGUNDO: "+ Constants.COUNT_MULX_SEGUNDO);
+        System.out.println( "COUNT_MULX_TERCERO: "+ Constants.COUNT_MULX_TERCERO);
+
+        System.out.println("___________________________________");
+
+        System.out.println( "COUNT_MULY_PRIMERO: "+ Constants.COUNT_MULY_PRIMERO);
+        System.out.println( "COUNT_MULY_SEGUNDO: "+ Constants.COUNT_MULY_SEGUNDO);
+        System.out.println( "COUNT_MULY_TERCERO: "+ Constants.COUNT_MULY_TERCERO);
 
 //
 //            AtomicInteger contador44 = new AtomicInteger();
@@ -108,10 +127,10 @@ public class Main {
 //                    .filter(agente -> agente.agenteisDentroFigura()).collect(Collectors.toList());
 //            System.out.println("Numero de agentes que estan dentro de la figura segun el tablero: " + listaAgentes4.size());
 //
-            /**HAY QUE CERRAR LA PESTAÑA DE FRAME**/
-            application.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        /**HAY QUE CERRAR LA PESTAÑA DE FRAME**/
+        application.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-         }
+    }
 
             /*System.out.println("Hello World!");
             Main objeto = new Main();
@@ -135,7 +154,7 @@ public class Main {
 
            */
 
-        //}
+    //}
         /*
         public void primeraAccion(int numero, String s){
             System.out.println("Este es el numero: " + numero);
@@ -143,4 +162,4 @@ public class Main {
         }
 
         */
-    }
+}

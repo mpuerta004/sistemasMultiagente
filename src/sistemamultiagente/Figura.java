@@ -19,9 +19,9 @@ public class Figura {
         figura = new Circle(Constants.CENTER, Constants.RADIO);
     }
 
+
+
     public boolean isDentroFigura(Point point) {
-
-
         if (point.getX() < 15&& point.getX()>5&& point.getY()<15&& point.getY()>5) {
             return true;
         } else {

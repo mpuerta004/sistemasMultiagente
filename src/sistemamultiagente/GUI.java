@@ -39,7 +39,7 @@ public class GUI extends JFrame {
         Tablero.getInstance().getTablero().keySet().forEach(agente -> {
                     if (agente.getPerdido()) {
                         g2d.setPaint(Color.RED);
-                    } else if (figura.isDentroFigura(Tablero.getInstance().getTablero().get(agente))){
+                    } else if (figura.isDentroFigura(agente.getPosicion())){
                             //Constants.CENTER.distance(agente.getPosicion()) <= Constants.RADIO) {
                         g2d.setPaint(Color.WHITE);
                     } else {

@@ -140,7 +140,7 @@ public class Agente {
 //
 
             if ((gradientes.get(0) == 0.0 && gradientes.get(1) == 0.0) ||
-                    (i > 10000)) {
+                    (i > 100000)) {
                 System.out.println("HE SALIDO POR SQUI" + i);
                 break;
             }
@@ -239,11 +239,6 @@ public class Agente {
             Point solTrilateracion = this.trilateracion(agentesCercanosNoPerdidos);
             this.posicion = solTrilateracion;
             this.listaTrilateraciones.add(solTrilateracion);
-
-
-            if (this.getId() == 2) {
-                System.out.println("Trilateracion");
-            }
 
         }
         if (Tablero.getInstance().getEtapa() % Constants.NUM_DE_PASOS_PARa_MEDIAR_LASTRILATERACIONES == 0) {
@@ -377,6 +372,7 @@ public class Agente {
                     Constants.ERROR_MOV * Tablero.getInstance().errorUniforme(Constants.DISTANCIA_MAX_MOV)));
 
             this.posicion = Tablero.getInstance().posicionModuloTablero(nueva);
+           this.consensoDeCoordenadas();
         }
     }
 

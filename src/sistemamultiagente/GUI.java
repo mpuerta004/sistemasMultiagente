@@ -33,16 +33,17 @@ public class GUI extends JFrame {
         //dibujo la figura
         Figura figura = new Figura();
         Point centroFigura = redimensionarizar(Constants.CENTER, 2 * Constants.RADIO);
-        g2d.setPaint(Color.GRAY);
-        g2d.fill(new Ellipse2D.Double(centroFigura.getX()*15+50, 50+centroFigura.getY()*15, 2 * Constants.RADIO * 15, 2 * Constants.RADIO * 15));
+        g2d.setPaint(Color.BLACK);
+        g2d.fill(new Rectangle2D.Double(5*15+50, 50+5*15, 2 * 5* 15, 2 * 5 * 15));
         //Dibujar los agentes en la posicion en la que estan.
         Tablero.getInstance().getTablero().keySet().forEach(agente -> {
                     if (agente.getPerdido()) {
                         g2d.setPaint(Color.RED);
-                    } else if (Constants.CENTER.distance(agente.getPosicion()) <= Constants.RADIO) {
-                        g2d.setPaint(Color.GREEN);
+                    } else if (figura.isDentroFigura(Tablero.getInstance().getTablero().get(agente))){
+                            //Constants.CENTER.distance(agente.getPosicion()) <= Constants.RADIO) {
+                        g2d.setPaint(Color.WHITE);
                     } else {
-                        g2d.setPaint(Color.BLUE);
+                        g2d.setPaint(Color.RED);
                     }
 
                     Point centroAgente;

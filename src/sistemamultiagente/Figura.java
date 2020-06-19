@@ -20,7 +20,15 @@ public class Figura {
     }
 
     public boolean isDentroFigura(Point point) {
-        return figura.isDentro(point);
+
+
+        if (point.getX() < 15&& point.getX()>5&& point.getY()<15&& point.getY()>5) {
+            return true;
+        } else {
+            return false;
+        }
     }
+//        return figura.isDentro(point);
+//    }
 
 }

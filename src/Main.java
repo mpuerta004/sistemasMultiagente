@@ -2,6 +2,7 @@ import sistemamultiagente.*;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -21,35 +22,53 @@ public class Main {
 
         //application.setDefaultCloseperation(JFrame.EXIT_ON_CLOSE);
         //Agentes no perdidos
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < Constants.AGENTES_NO_PERDIDOS; i++) {
             tablero.anadirAgente(false);
         }
         // Agentes perdidos
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < Constants.AGENTES_PERDIDOS; i++) {
             tablero.anadirAgente(true);
         }
 
         application.paint(application.getGraphics());
 
         for (tablero.getEtapa(); tablero.getEtapa() < 2001; tablero.aumentarEtapa()) {
-
+            Constants.MEDIA_SIN_DIVIDIR = new Point (0.0,0.0);
+            Constants.AGENTES_CON_COORDENADAS=0;
+            Constants.VARIANZA=0.0;
             tablero.getTablero().keySet().forEach(agente -> {
 
                 agente.consensoDeCoordenadas();
                 agente.calcularVectorMovimiento();
                 tablero.actualizarPosiciones(agente);
 
-
-            });
-            if (Tablero.getInstance().getEtapa() % Constants.NUM_DE_PASOS_PARa_MEDIAR_LASTRILATERACIONES == 0) {
-                System.out.println("MEdia de trilateraciones"+ Tablero.getInstance().getEtapa()) ;
+            if (!agente.getPerdido()){
+                Constants.AGENTES_CON_COORDENADAS=Constants.AGENTES_CON_COORDENADAS+1;
+                Constants.MEDIA_SIN_DIVIDIR= Constants.MEDIA_SIN_DIVIDIR.add(agente.getPosicion());
+                //System.out.println(Constants.MEDIA_SIN_DIVIDIR);
             }
 
+            });
+            Constants.MEDIA_SIN_DIVIDIR=  Constants.MEDIA_SIN_DIVIDIR.div(Constants.AGENTES_CON_COORDENADAS);
+            System.out.println("MEdia " + Constants.MEDIA_SIN_DIVIDIR);
+
+            //System.out.println(Constants.AGENTES_CON_COORDENADAS);
+
+            for (Agente agente : tablero.getTablero().keySet()) {
+                if (!agente.getPerdido()){
+                    Double nuevo = Math.pow(agente.getPosicion().distance(Constants.MEDIA_SIN_DIVIDIR),2);
+
+
+                Constants.VARIANZA = Constants.VARIANZA+ nuevo;
+            }}
+            Constants.VARIANZA=Constants.VARIANZA/(Constants.AGENTES_CON_COORDENADAS);
+            System.out.println(Constants.AGENTES_CON_COORDENADAS);
+            System.out.println("VArianza de la etapa "+tablero.getEtapa() + " es: " + Constants.VARIANZA);
 
             //System.out.println("Etapa" + tablero.getEtapa());
             application.update(application.getGraphics());
             try {
-                Thread.sleep(1 * 20);
+                Thread.sleep(3* 100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -77,15 +96,6 @@ public class Main {
         System.out.println("Trilateraciones MALL echas: "+ Constants.COUNTMAL);
         System.out.println("___________________________________");
 
-        System.out.println( "COUNT_MULX_PRIMERO: "+ Constants.COUNT_MULX_PRIMERO);
-        System.out.println( "COUNT_MULX_SEGUNDO: "+ Constants.COUNT_MULX_SEGUNDO);
-        System.out.println( "COUNT_MULX_TERCERO: "+ Constants.COUNT_MULX_TERCERO);
-
-        System.out.println("___________________________________");
-
-        System.out.println( "COUNT_MULY_PRIMERO: "+ Constants.COUNT_MULY_PRIMERO);
-        System.out.println( "COUNT_MULY_SEGUNDO: "+ Constants.COUNT_MULY_SEGUNDO);
-        System.out.println( "COUNT_MULY_TERCERO: "+ Constants.COUNT_MULY_TERCERO);
 
 //
 //            AtomicInteger contador44 = new AtomicInteger();

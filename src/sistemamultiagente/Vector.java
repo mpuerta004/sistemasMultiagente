@@ -50,6 +50,7 @@ public class Vector {
     public Point add(Point p2) {
         return new Point(this.getX() + p2.getX(), this.getY() + p2.getY());
     }
+
     public String toString() {
         return String.format("X=%f, Y=%f", this.getX(), this.getY());
     }

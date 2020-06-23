@@ -1,24 +1,43 @@
 import sistemamultiagente.*;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
 public class Main {
 
     public static void main(String[] args) {
-        Main main = new Main();
-        main.execute();
+        try {
+            String ruta = "C:\\Users\\Maite\\Desktop\\Sistemas Multiagente\\Probar a hacer un fichero\\prueba4sinErrorConPuntoInicialCorrecto.csv";
+            PrintWriter writer = new PrintWriter(ruta, "UTF-8");
+            Main main = new Main();
+            for (int j = 0; j < 10; j++) {
+                main.execute(writer);
+                Tablero.getInstance().reset();
+            }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void execute() {
-        ArrayList<Double> ListaPorCentajeAgentesDentroReal = new ArrayList<>();
-        ArrayList<Double> ListaPorCentajeAgentesDentro = new ArrayList<>();
-        ArrayList<Double> SincronizacionAgentes = new ArrayList<>();
+    private void execute(PrintWriter writer) {
+
+        String ListaPorCentajeAgentesDentroReal = "";//
+        String ListaPorCentajeAgentesDentro = ""; //= new ArrayList<>();
+        String SincronizacionAgentes = ""; //= new ArrayList<>();
+        String SincronizacionLOCALAgentes = "";
+        String EtapasParaEstadisticas = ""; //= new ArrayList<>();
+
         Tablero tablero = Tablero.getInstance();
         double EjeXMaximo = Constants.EJE_X_MAXIMO;
         double EjeYmaximo = Constants.EJE_Y_MAXIMO;
@@ -36,71 +55,45 @@ public class Main {
 
         application.paint(application.getGraphics());
 
-        for (tablero.getEtapa(); tablero.getEtapa() < 1001; tablero.aumentarEtapa()) {
-            Constants.MEDIA_SIN_DIVIDIR = new Point(0.0, 0.0);
-            Constants.AGENTES_CON_COORDENADAS = 0;
-            Constants.VARIANZA = 0.0;
-            tablero.getTablero().keySet().forEach(agente ->
-
-                        agente.consensoDeCoordenadas());
+        for (tablero.getEtapa(); tablero.getEtapa() < Constants.NUMERO_ETAPAS; tablero.aumentarEtapa()) {
             tablero.getTablero().keySet().forEach(agente -> {
 
                 agente.consensoDeCoordenadas();
                 agente.calcularVectorMovimiento();
                 tablero.actualizarPosiciones(agente);
-
-//                if (!agente.getPerdido()) {
-//                    Constants.AGENTES_CON_COORDENADAS = Constants.AGENTES_CON_COORDENADAS + 1;
-//                    Constants.MEDIA_SIN_DIVIDIR = Constants.MEDIA_SIN_DIVIDIR.add(agente.getPosicion());
-//                    //System.out.println(Constants.MEDIA_SIN_DIVIDIR);
-//                }
-
             });
-//            Constants.MEDIA_SIN_DIVIDIR = Constants.MEDIA_SIN_DIVIDIR.div(Constants.AGENTES_CON_COORDENADAS);
-//            System.out.println("MEdia " + Constants.MEDIA_SIN_DIVIDIR);
-//            //System.out.println(Constants.AGENTES_CON_COORDENADAS);
 
-//            for (Agente agente : tablero.getTablero().keySet()) {
-//                if (!agente.getPerdido()) {
-//                    Double nuevo = Math.pow(agente.getPosicion().distance(Constants.MEDIA_SIN_DIVIDIR), 2);
-//
-//
-//                    Constants.VARIANZA = Constants.VARIANZA + nuevo;
-//                }
-//            }
-//            Constants.VARIANZA = Constants.VARIANZA / (Constants.AGENTES_CON_COORDENADAS);
-//            System.out.println(Constants.AGENTES_CON_COORDENADAS);
-//            System.out.println("VArianza de la etapa " + tablero.getEtapa() + " es: " + Constants.VARIANZA);
-
-            //System.out.println("Etapa" + tablero.getEtapa());
             application.update(application.getGraphics());
             try {
-                Thread.sleep(3 * 10);
+                Thread.sleep(Constants.NUMERO_ESPERA);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             if (tablero.getEtapa() % 100 == 0) {
-                ListaPorCentajeAgentesDentroReal.add(AgentesDentroDeLaFiguraREAL());
-                ListaPorCentajeAgentesDentro.add(AgentesDentroDeLaFiguraSegunEllos());
-                SincronizacionAgentes.add(SincornizacionGLOBAL());
+                EtapasParaEstadisticas = EtapasParaEstadisticas + " ; " + tablero.getEtapa();
+                ListaPorCentajeAgentesDentroReal = ListaPorCentajeAgentesDentroReal + " ; " + String.format("%.2f", AgentesDentroDeLaFiguraREAL());
+                ListaPorCentajeAgentesDentro = ListaPorCentajeAgentesDentro + " ; " + String.format("%.2f", AgentesDentroDeLaFiguraSegunEllos());
+                SincronizacionAgentes = SincronizacionAgentes + " ; " + String.format("%.2f", SincornizacionGLOBAL());
+                SincronizacionLOCALAgentes = SincronizacionLOCALAgentes + " ; " + String.format("%.2f", SincornizacionLOCAL());
             }
         }
-//
-//
-        /**HAY QUE CERRAR LA PESTAÑA DE FRAME**/
-        application.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        System.out.println("Agentes dentro real  ||  Agentes dentro segun ellos || Sincronicacion Gloabl");
-        for (int i = 0; i < ListaPorCentajeAgentesDentroReal.size(); i++) {
-            System.out.println(ListaPorCentajeAgentesDentroReal.get(i) + "                    " +
-                    ListaPorCentajeAgentesDentro.get(i)+ "                    " + SincronizacionAgentes.get(i));
-        }
+        writer.println("Etapa" + EtapasParaEstadisticas);
+        writer.println("%realAgentesDentroFigura" + ListaPorCentajeAgentesDentroReal);
+        System.out.println(ListaPorCentajeAgentesDentroReal);
+        writer.println("%AgenteCreenDentroFigura" + ListaPorCentajeAgentesDentro);
+        writer.println("Sincronicacion entre agentes" + SincronizacionAgentes);
+        writer.println("Sincronicacion LOCAL entre agentes" + SincronizacionLOCALAgentes);
 
+
+//
+        /* HAY QUE CERRAR LA PESTAÑA DE FRAME */
+        application.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
 
     public double AgentesDentroDeLaFiguraREAL() {
         Tablero tablero = Tablero.getInstance();
-        Figura figura = new Figura();
+        FiguraCuadrado figura = new FiguraCuadrado();
         Double numeroTotalAgentes = Double.valueOf(Constants.AGENTES_NO_PERDIDOS + Constants.AGENTES_PERDIDOS);
         Double agentesDentroFigura = 0.0;
         for (Agente agente : tablero.getTablero().keySet()) {
@@ -113,7 +106,7 @@ public class Main {
 
     public double AgentesDentroDeLaFiguraSegunEllos() {
         Tablero tablero = Tablero.getInstance();
-        Figura figura = new Figura();
+        FiguraCuadrado figura = new FiguraCuadrado();
         Double numeroTotalAgentes = 0.0;
         Double agentesDentroFiguraSegunELLOS = 0.0;
         for (Agente agente : tablero.getTablero().keySet()) {
@@ -133,26 +126,58 @@ public class Main {
         Tablero tablero = Tablero.getInstance();
         Double error = 0.0;
         for (Agente agente : tablero.getTablero().keySet()) {
-            if(!agente.getPerdido()){
-            error = error +
-                    Math.abs((agenteSujeto.getPosicion().distance(agente.getPosicion()) -
-                            tablero.getTablero().get(agenteSujeto).distance(tablero.getTablero().get(agente))
-                    ));
-        }}
+            if (!agente.getPerdido()) {
+                error = error +
+                        Math.abs((agenteSujeto.getPosicion().distance(agente.getPosicion()) -
+                                tablero.getTablero().get(agenteSujeto).distance(tablero.getTablero().get(agente))
+                        ));
+            }
+        }
         return error;
     }
 
-    public double SincornizacionGLOBAL(){
+    public double SincronizacionLOCALUnAgente(Agente agenteSujeto) {
         Tablero tablero = Tablero.getInstance();
         Double error = 0.0;
-        Double numeroDeAgentesNoPErdidos=0.0;
-        for (Agente agente: tablero.getTablero().keySet()){
-            if(!agente.getPerdido()){
-                numeroDeAgentesNoPErdidos=numeroDeAgentesNoPErdidos+1;
+        for (Agente agente : tablero.agentesCercanosNoPerdidos(agenteSujeto)) {
+            if (!agente.getPerdido() && tablero.agentesCercanosNoPerdidos(agenteSujeto).size() > 1) {
+                error = error +
+                        Math.abs((agenteSujeto.getPosicion().distance(agente.getPosicion()) -
+                                tablero.getTablero().get(agenteSujeto).distance(tablero.getTablero().get(agente))
+                        ));
+            }
+        }
+//        if (tablero.agentesCercanosNoPerdidos(agenteSujeto).size() > 1) {
+//            error = error / tablero.agentesCercanosNoPerdidos(agenteSujeto).size();
+//        }
+        //System.out.println(tablero.agentesCercanosNoPerdidos(agenteSujeto).size());
+        return error;
+    }
+
+    public double SincornizacionGLOBAL() {
+        Tablero tablero = Tablero.getInstance();
+        Double error = 0.0;
+        Double numeroDeAgentesNoPErdidos = 0.0;
+        for (Agente agente : tablero.getTablero().keySet()) {
+            if (!agente.getPerdido()) {
+                numeroDeAgentesNoPErdidos = numeroDeAgentesNoPErdidos + 1;
                 error = error + SincronizacionGLOABLUnAgente(agente);
             }
         }
-        return (error/numeroDeAgentesNoPErdidos);
+        return (error / numeroDeAgentesNoPErdidos);
+    }
+
+    public double SincornizacionLOCAL() {
+        Tablero tablero = Tablero.getInstance();
+        Double error = 0.0;
+        Double numeroDeAgentesNoPErdidos = 0.0;
+        for (Agente agente : tablero.getTablero().keySet()) {
+            if (!agente.getPerdido()) {
+                numeroDeAgentesNoPErdidos = numeroDeAgentesNoPErdidos + 1;
+                error = error + SincronizacionLOCALUnAgente(agente);
+            }
+        }
+        return (error / numeroDeAgentesNoPErdidos);
     }
 
 }

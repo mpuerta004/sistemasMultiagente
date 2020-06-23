@@ -31,8 +31,8 @@ public class GUI extends JFrame {
         g2d.setPaint(Color.GRAY);
         g2d.fill(new Rectangle2D.Double(0.0,50+(Constants.EJE_Y_MAXIMO)*15.0,  5000000,50));
         //dibujo la figura
-        Figura figura = new Figura();
-        Point centroFigura = redimensionarizar(Constants.CENTER, 2 * Constants.RADIO);
+        FiguraCuadrado figura = new FiguraCuadrado();
+//        Point centroFigura = redimensionarizar(Constants.CENTER, 2 * Constants.RADIO);
         g2d.setPaint(Color.BLACK);
         g2d.fill(new Rectangle2D.Double(5*15+50, 50+5*15, 2 * 5* 15, 2 * 5 * 15));
         //Dibujar los agentes en la posicion en la que estan.

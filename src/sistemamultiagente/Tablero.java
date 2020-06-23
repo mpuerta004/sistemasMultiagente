@@ -167,12 +167,15 @@ public class Tablero {
     //Por ultimo le dice al agente que tambien actualice su posicion.
     public void actualizarPosiciones(Agente agente) {
         Point posicionAntigua = tablero.get(agente);
+
         Point nuevaPosicion = posicionModuloTablero(tablero.get(agente).add(agente.getVectorMovimiento()));
         //todo EGO: creo que hay formas mejores de hacer esto
         tablero.put(agente, new Point(Constants.EJE_X_MAXIMO * 1000, Constants.EJE_Y_MAXIMO * 1000));
         while (conflictos(nuevaPosicion)) {
-            agente.calcularVectorMovimiento();
-            nuevaPosicion = posicionAntigua.add(agente.getVectorMovimiento());
+            agente.setVectorMovimiento(new Vector(agente.getVectorMovimiento().getX()-Constants.TAMAÑO_AGENTE*2,
+                    agente.getVectorMovimiento().getY()-Constants.TAMAÑO_AGENTE*2) );
+            //agente.calcularVectorMovimiento();
+            nuevaPosicion = posicionModuloTablero(posicionAntigua.add(agente.getVectorMovimiento()));
         }
         tablero.put(agente, nuevaPosicion);
         agente.actualizarPosicion();
@@ -186,20 +189,19 @@ public class Tablero {
         double ejeYMaximo = Constants.EJE_Y_MAXIMO;
         if (!this.isDentro(nuevaPosicion)) {
             while (posicionX < 0.0) {
-                posicionX = 0.0;
-                //this.ejeXMaximo + posicionX;
+                //posicionX = 0.0;
+                posicionX= ejeXMaximo -posicionX;
             }
             while (posicionX > ejeXMaximo) {
-                posicionX = ejeXMaximo;
-                //posicionX - this.ejeXMaximo;
+                posicionX =
+                posicionX - ejeXMaximo;
             }
             while (posicionY < 0.0) {
-                posicionY = 0.0;
-                // this.ejeYmaximo + posicionY;
+                posicionY =
+                ejeYMaximo - posicionY;
             }
             while (posicionY > ejeYMaximo) {
-                posicionY = ejeYMaximo;
-                // posicionY - this.ejeYMaximo;
+                posicionY = posicionY - ejeYMaximo;
             }
             nuevaPosicion = new Point(posicionX, posicionY);
         }
@@ -216,6 +218,10 @@ public class Tablero {
         } else {
             return false;
         }
+    }
+    public void reset(){
+        tablero = new HashMap<>();
+        this.etapa = 0;
     }
 
 

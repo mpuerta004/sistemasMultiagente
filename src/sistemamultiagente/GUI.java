@@ -45,7 +45,7 @@ public class GUI extends JFrame {
                             //Constants.CENTER.distance(agente.getPosicion()) <= Constants.RADIO) {
                         g2d.setPaint(Color.WHITE);
                     } else {
-                        g2d.setPaint(Color.BLUE);
+                        g2d.setPaint(Color.green);
                     }
 
                     Point centroAgente;

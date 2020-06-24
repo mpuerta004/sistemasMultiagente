@@ -17,7 +17,7 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            String ruta = "C:\\Users\\Maite\\Desktop\\Sistemas Multiagente\\Probar a hacer un fichero\\prueba8Figura2MOVIMIENTOaumentado.csv";
+            String ruta = "C:\\Users\\Maite\\Desktop\\Sistemas Multiagente\\Probar a hacer un fichero\\prueba10Modificado.csv";
             PrintWriter writer = new PrintWriter(ruta, "UTF-8");
             Main main = new Main();
             for (int j = 0; j < 10; j++) {

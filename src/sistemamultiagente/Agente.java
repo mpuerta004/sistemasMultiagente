@@ -17,7 +17,7 @@ public class Agente {
     private Vector vectorMovimiento;
     private HashMap<Agente, Double> listaDistanciaSensor = new HashMap<>();
     private Point posicionAntigua;
-    private List<Point> posicionesDentroFigura;
+    private List<Point> posicionesDentroFigura = new ArrayList<>();
 
 
     /**
@@ -32,6 +32,7 @@ public class Agente {
         if (perdido) {
             this.posicion = null;
             this.posicionAntigua = null;
+            this.posicionesDentroFigura = new ArrayList<>();
         }
         this.listaTrilateraciones = new ArrayList<>();
         this.vectorMovimiento = new Vector(0.0, 0.0);
@@ -96,15 +97,7 @@ public class Agente {
         for (Agente agente : tresAgentesCercanosNoPerdidos.keySet()) {
             listaAgentes.add(agente);
         }
-        Point baricentro = Tablero.getInstance().posicionModuloTablero(new Point(
-                listaAgentes.stream().mapToDouble(a ->
-                        Tablero.getInstance().redInalambrica(a).getX()).sum() / 3,
-                listaAgentes.stream().mapToDouble(a ->
-                        Tablero.getInstance().redInalambrica(a).getX()).sum() / 3
-        ));
-        //return baricentro;
-//              System.out.println("Distancia del punto real con el varicentro: "
-//                +baricentro.distance(Tablero.getInstance().getTablero().get(this)));
+
         Circle circulo1 = new Circle(listaAgentes.get(0).getPosicion(),
                 tresAgentesCercanosNoPerdidos.get(listaAgentes.get(0)));
         Circle circulo2 = new Circle(listaAgentes.get(1).getPosicion(),
@@ -118,7 +111,7 @@ public class Agente {
 
         //tem.out.println(interseccion_1_2);
         if (interseccion_1_2.size() == 0 || interseccion_1_3.size() == 0 || interseccion_2_3.size() == 0) {
-           // System.out.println("*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*//*/**/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/");
+            // System.out.println("*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*//*/**/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/");
         }
         if (interseccion_1_2.size() == 1) {
             //System.out.println(interseccion_1_2.get(0));
@@ -137,7 +130,7 @@ public class Agente {
             Line L2 = new Line(interseccion_1_3.get(0), interseccion_1_3.get(1));
             Point interseccion = L1.interseccion(L2);
             if (interseccion.distance(interseccion_1_2.get(0)) < interseccion.distance(interseccion_1_2.get(1))) {
-              //  System.out.println("Distancia al punto real:" + interseccion_1_2.get(0).distance(Tablero.getInstance().getTablero().get(this)));
+                //  System.out.println("Distancia al punto real:" + interseccion_1_2.get(0).distance(Tablero.getInstance().getTablero().get(this)));
                 return interseccion_1_2.get(0);
             } else {
                 //System.out.println("Distancia al punto real:" + interseccion_1_2.get(1).distance(Tablero.getInstance().getTablero().get(this)));
@@ -305,7 +298,11 @@ public class Agente {
                 this.perdido = false;
 
             }
-            //if(figura.isDentroFigura(this.posicion)){this.posicionesDentroFigura.add(this.posicion);}
+            //System.out.println(this.posicion);
+            if (figura.isDentroFigura(this.posicion)) {
+                //System.out.println(this.posicionesDentroFigura);
+                this.posicionesDentroFigura.add(this.posicion);
+            }
             this.posicionAntigua = this.posicion;
             Point solTrilateracion = this.trilateracion();
             this.posicion = solTrilateracion;
@@ -374,26 +371,32 @@ public class Agente {
     private Vector movDentro() {
         double distanciaAgente;
         Point repulsionPorEseAgente;
-        Point diferenciaPosiciones;
         double solx = 0.0;
         double soly = 0.0;
+        Point diferenciaPosiciones;
         List<Agente> agenteCercanosNoPerdidos = Tablero.getInstance().agentesCercanosNoPerdidos(this);
         for (Agente agente : agenteCercanosNoPerdidos) {
-
-            //todo esto no se si debe estar el if.
-            // if (figura.isDentroFigura(agente.getPosicion())) {
-            distanciaAgente = Tablero.getInstance().sensorAgente(this, agente);
-            if (distanciaAgente < Constants.RADIO_DE_REPULSION) {
-                diferenciaPosiciones = this.posicion.sub(agente.getPosicion());
-                repulsionPorEseAgente = diferenciaPosiciones.div(distanciaAgente);
-                //todo
-                //if (-distanciaAgente + Constants.RADIO_DE_REPULSION > 0.0) {
-                //repulsionPorEseAgente = repulsionPorEseAgente.scale(-1.0);
-                //System.out.println("Repulsion por agente"+ solx + " Y :"+ soly)
-                solx = solx + repulsionPorEseAgente.getX();
-                soly = soly + repulsionPorEseAgente.getY();
+            diferenciaPosiciones = agente.posicion.sub(this.getPosicion());
+            double distance = Math.sqrt(diferenciaPosiciones.getX() * diferenciaPosiciones.getX() + diferenciaPosiciones.getY() * diferenciaPosiciones.getY());
+            if (distance < Constants.RADIO_DE_REPULSION) {
+                solx -= diferenciaPosiciones.getX() * (Constants.RADIO_DE_REPULSION - distance) / distance;
+                soly -= diferenciaPosiciones.getY() * (Constants.RADIO_DE_REPULSION - distance) / distance;
             }
         }
+//            //todo esto no se si debe estar el if.
+//            // if (figura.isDentroFigura(agente.getPosicion())) {
+//            distanciaAgente = Tablero.getInstance().sensorAgente(this, agente);
+//            if (distanciaAgente < Constants.RADIO_DE_REPULSION) {
+//                diferenciaPosiciones = this.posicion.sub(agente.getPosicion());
+//                repulsionPorEseAgente = diferenciaPosiciones.div(distanciaAgente);
+//                //todo
+//                //if (-distanciaAgente + Constants.RADIO_DE_REPULSION > 0.0) {
+//                //repulsionPorEseAgente = repulsionPorEseAgente.scale(-1.0);
+//                //System.out.println("Repulsion por agente"+ solx + " Y :"+ soly)
+//                solx = solx + repulsionPorEseAgente.getX();
+//                soly = soly + repulsionPorEseAgente.getY();
+//            }
+//        }
 
         Vector vectorMovimiento = new Vector(solx, soly);
 
@@ -424,13 +427,27 @@ public class Agente {
         if (this.perdido) { // esta perdido.
             this.vectorMovimiento = this.movFuera();
         } else { // no esta perdido
-            if (this.posicionAntigua != null && figura.isDentroFigura(this.posicionAntigua) && !figura.isDentroFigura(this.posicion)) {
-                // vectoMov + this.pocision = this.posicionAntigua.
-                Point posicion = this.posicionAntigua.sub(this.posicion);
-                double modulo = posicion.distance(new Point(0.0, 0.0));
-                posicion = posicion.div(modulo);
-                posicion = posicion.scale(Constants.DISTANCIA_MAX_MOV);
-                this.vectorMovimiento = new Vector(posicion.getX(), posicion.getY());
+            if (this.posicionesDentroFigura.size() >= 1 && !figura.isDentroFigura(this.posicion)) {
+                for (Point punto : this.posicionesDentroFigura) {
+                    Double distance = this.posicion.distance(punto);
+                    if (distance < Constants.DISCANCIA_MAX_SENSOR) {
+                        Point posicion = punto.sub(this.posicion);
+                        double modulo = posicion.distance(new Point(0.0, 0.0));
+                        posicion = posicion.div(modulo);
+                        posicion = posicion.scale(Constants.DISTANCIA_MAX_MOV);
+                        this.vectorMovimiento = new Vector(posicion.getX(), posicion.getY());
+                        break;
+                    }
+                }
+
+
+//            if (this.posicionAntigua != null && figura.isDentroFigura(this.posicionAntigua) && !figura.isDentroFigura(this.posicion)) {
+//                // vectoMov + this.pocision = this.posicionAntigua.
+//                Point posicion = this.posicionAntigua.sub(this.posicion);
+//                double modulo = posicion.distance(new Point(0.0, 0.0));
+//                posicion = posicion.div(modulo);
+//                posicion = posicion.scale(Constants.DISTANCIA_MAX_MOV);
+//                this.vectorMovimiento = new Vector(posicion.getX(), posicion.getY());
 
             } else if (figura.isDentroFigura(this.posicion)) {
                 //Tablero.getInstance().getTablero().get(this))) { // esta dentro de la figura

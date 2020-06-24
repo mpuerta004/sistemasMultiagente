@@ -172,8 +172,8 @@ public class Tablero {
         //todo EGO: creo que hay formas mejores de hacer esto
         tablero.put(agente, new Point(Constants.EJE_X_MAXIMO * 1000, Constants.EJE_Y_MAXIMO * 1000));
         while (conflictos(nuevaPosicion)) {
-            agente.setVectorMovimiento(new Vector(agente.getVectorMovimiento().getX()-Constants.TAMAÑO_AGENTE*2,
-                    agente.getVectorMovimiento().getY()-Constants.TAMAÑO_AGENTE*2) );
+            agente.setVectorMovimiento(new Vector(agente.getVectorMovimiento().getX()-Constants.TAMAÑO_AGENTE,
+                    agente.getVectorMovimiento().getY()-Constants.TAMAÑO_AGENTE) );
             //agente.calcularVectorMovimiento();
             nuevaPosicion = posicionModuloTablero(posicionAntigua.add(agente.getVectorMovimiento()));
         }

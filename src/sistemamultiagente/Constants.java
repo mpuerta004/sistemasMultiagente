@@ -11,10 +11,10 @@ public class Constants {
 
     /**AGENTE**/
     public static final double DISCANCIA_MAX_SENSOR = 5.0;
-    public static final double DISTANCIA_MAX_MOV =1.5;
+    public static final double DISTANCIA_MAX_MOV =3.0;
     public static final int NUM_DE_PASOS_PARa_MEDIAR_LASTRILATERACIONES = 10;
     public static final double TAMAÑO_AGENTE= 0.25;
-    public static final double RADIOREPULSION = 3.0;
+    public static final double RADIO_DE_REPULSION = 3.0;
 
 
     /** TABLERO **/
@@ -33,7 +33,7 @@ public class Constants {
     public static final double EJE_X_MAXIMO_FIGURA=15.0;
     public static final double EJE_Y_MAXIMO_FIGURA=15.0;
 
-    public static final double LEARNING_RATE=0.01;
+    public static final double LEARNING_RATE=0.001;
     public static final int NUMERO_MAXIMA_ITERACIONES=  1000;
     public static final double CRITERIO=  0.00001;
 }

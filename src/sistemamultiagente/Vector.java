@@ -29,6 +29,11 @@ public class Vector {
                 Math.pow(this.getX() - other.getX(), 2)  + Math.pow(this.getY() - other.getY(),2)
         );
     }
+    public double distance(Point other) {
+        return Math.sqrt(
+                Math.pow(this.getX() - other.getX(), 2)  + Math.pow(this.getY() - other.getY(),2)
+        );
+    }
 
     public Vector sub(Vector other) {
         return new Vector(this.getX()- other.getX(), this.getY() - other.getY());

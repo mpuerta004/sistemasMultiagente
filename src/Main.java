@@ -17,7 +17,7 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            String ruta = "C:\\Users\\Maite\\Desktop\\Sistemas Multiagente\\Probar a hacer un fichero\\prueba4sinErrorConPuntoInicialCorrecto.csv";
+            String ruta = "C:\\Users\\Maite\\Desktop\\Sistemas Multiagente\\Probar a hacer un fichero\\prueba8Figura2MOVIMIENTOaumentado.csv";
             PrintWriter writer = new PrintWriter(ruta, "UTF-8");
             Main main = new Main();
             for (int j = 0; j < 10; j++) {
@@ -36,6 +36,7 @@ public class Main {
         String ListaPorCentajeAgentesDentro = ""; //= new ArrayList<>();
         String SincronizacionAgentes = ""; //= new ArrayList<>();
         String SincronizacionLOCALAgentes = "";
+        String SincronizacionDentroFigura = "";
         String EtapasParaEstadisticas = ""; //= new ArrayList<>();
 
         Tablero tablero = Tablero.getInstance();
@@ -75,14 +76,20 @@ public class Main {
                 ListaPorCentajeAgentesDentro = ListaPorCentajeAgentesDentro + " ; " + String.format("%.2f", AgentesDentroDeLaFiguraSegunEllos());
                 SincronizacionAgentes = SincronizacionAgentes + " ; " + String.format("%.2f", SincornizacionGLOBAL());
                 SincronizacionLOCALAgentes = SincronizacionLOCALAgentes + " ; " + String.format("%.2f", SincornizacionLOCAL());
+                SincronizacionDentroFigura = SincronizacionDentroFigura + " ; " + String.format("%.2f", SincornizacionGLOBALDentroFigura());
             }
         }
         writer.println("Etapa" + EtapasParaEstadisticas);
         writer.println("%realAgentesDentroFigura" + ListaPorCentajeAgentesDentroReal);
         System.out.println(ListaPorCentajeAgentesDentroReal);
         writer.println("%AgenteCreenDentroFigura" + ListaPorCentajeAgentesDentro);
+        System.out.println(ListaPorCentajeAgentesDentro);
         writer.println("Sincronicacion entre agentes" + SincronizacionAgentes);
+        System.out.println(SincronizacionAgentes);
         writer.println("Sincronicacion LOCAL entre agentes" + SincronizacionLOCALAgentes);
+        System.out.println(SincronizacionLOCALAgentes);
+        writer.println("Sincronicacion GLOABL dentro figura" + SincronizacionDentroFigura);
+        System.out.println(SincronizacionDentroFigura);
 
 
 //
@@ -122,6 +129,37 @@ public class Main {
         return (agentesDentroFiguraSegunELLOS / numeroTotalAgentes) * 100;
     }
 
+
+    public double SincronizacionGLOABLUnAgenteDentroFigura(Agente agenteSujeto) {
+        Tablero tablero = Tablero.getInstance();
+        FiguraCuadrado figura = new FiguraCuadrado();
+        Double error = 0.0;
+        for (Agente agente : tablero.getTablero().keySet()) {
+            if (!agente.getPerdido() && figura.isDentroFigura(agente.getPosicion()) ) {
+                error = error +
+                        Math.abs((agenteSujeto.getPosicion().distance(agente.getPosicion()) -
+                                tablero.getTablero().get(agenteSujeto).distance(tablero.getTablero().get(agente))
+                        ));
+            }
+        }
+        if(tablero.getTablero().keySet().size()>=1){error=error/tablero.getTablero().keySet().size();}
+        return error;
+    }
+
+    public double SincornizacionGLOBALDentroFigura() {
+        Tablero tablero = Tablero.getInstance();
+        Double error = 0.0;
+        FiguraCuadrado figura = new FiguraCuadrado();
+        Double numeroDeAgentesNoPErdidos = 0.0;
+        for (Agente agente : tablero.getTablero().keySet()) {
+            if (!agente.getPerdido()&& figura.isDentroFigura(agente.getPosicion())) {
+                numeroDeAgentesNoPErdidos = numeroDeAgentesNoPErdidos + 1;
+                error = error + SincronizacionGLOABLUnAgenteDentroFigura(agente);
+            }
+        }
+        return (error / numeroDeAgentesNoPErdidos);
+    }
+
     public double SincronizacionGLOABLUnAgente(Agente agenteSujeto) {
         Tablero tablero = Tablero.getInstance();
         Double error = 0.0;
@@ -133,24 +171,7 @@ public class Main {
                         ));
             }
         }
-        return error;
-    }
-
-    public double SincronizacionLOCALUnAgente(Agente agenteSujeto) {
-        Tablero tablero = Tablero.getInstance();
-        Double error = 0.0;
-        for (Agente agente : tablero.agentesCercanosNoPerdidos(agenteSujeto)) {
-            if (!agente.getPerdido() && tablero.agentesCercanosNoPerdidos(agenteSujeto).size() > 1) {
-                error = error +
-                        Math.abs((agenteSujeto.getPosicion().distance(agente.getPosicion()) -
-                                tablero.getTablero().get(agenteSujeto).distance(tablero.getTablero().get(agente))
-                        ));
-            }
-        }
-//        if (tablero.agentesCercanosNoPerdidos(agenteSujeto).size() > 1) {
-//            error = error / tablero.agentesCercanosNoPerdidos(agenteSujeto).size();
-//        }
-        //System.out.println(tablero.agentesCercanosNoPerdidos(agenteSujeto).size());
+        if(tablero.getTablero().keySet().size()>=1){error=error/tablero.getTablero().keySet().size();}
         return error;
     }
 
@@ -166,6 +187,23 @@ public class Main {
         }
         return (error / numeroDeAgentesNoPErdidos);
     }
+
+    public double SincronizacionLOCALUnAgente(Agente agenteSujeto) {
+        Tablero tablero = Tablero.getInstance();
+        Double error = 0.0;
+        for (Agente agente : tablero.agentesCercanosNoPerdidos(agenteSujeto)) {
+            if (!agente.getPerdido() && tablero.agentesCercanosNoPerdidos(agenteSujeto).size() > 1) {
+                error = error +
+                        Math.abs((agenteSujeto.getPosicion().distance(agente.getPosicion()) -
+                                tablero.getTablero().get(agenteSujeto).distance(tablero.getTablero().get(agente))
+                        ));
+            }
+        }
+        if(tablero.agentesCercanosNoPerdidos(agenteSujeto).size()>=1){error=error/tablero.agentesCercanosNoPerdidos(agenteSujeto).size();}
+        return error;
+    }
+
+
 
     public double SincornizacionLOCAL() {
         Tablero tablero = Tablero.getInstance();

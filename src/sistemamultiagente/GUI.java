@@ -34,7 +34,9 @@ public class GUI extends JFrame {
         FiguraCuadrado figura = new FiguraCuadrado();
 //        Point centroFigura = redimensionarizar(Constants.CENTER, 2 * Constants.RADIO);
         g2d.setPaint(Color.BLACK);
-        g2d.fill(new Rectangle2D.Double(5*15+50, 50+5*15, 2 * 5* 15, 2 * 5 * 15));
+        g2d.fill(new Rectangle2D.Double(Constants.EJE_X_MINIMO_FIGURA*15+50, 50+Constants.EJE_X_MINIMO_FIGURA*15,
+                2 * ((Constants.EJE_Y_MAXIMO_FIGURA-Constants.EJE_X_MINIMO_FIGURA)/2)* 15,
+                2 * ((Constants.EJE_Y_MAXIMO_FIGURA-Constants.EJE_X_MINIMO_FIGURA)/2)* 15));
         //Dibujar los agentes en la posicion en la que estan.
         Tablero.getInstance().getTablero().keySet().forEach(agente -> {
                     if (agente.getPerdido()) {
@@ -43,7 +45,7 @@ public class GUI extends JFrame {
                             //Constants.CENTER.distance(agente.getPosicion()) <= Constants.RADIO) {
                         g2d.setPaint(Color.WHITE);
                     } else {
-                        g2d.setPaint(Color.RED);
+                        g2d.setPaint(Color.BLUE);
                     }
 
                     Point centroAgente;

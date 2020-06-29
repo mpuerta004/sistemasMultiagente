@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Constants {
 
-    public static final int AGENTES_NO_PERDIDOS=8;
+    public static final int AGENTES_NO_PERDIDOS=6;
     public static final int AGENTES_PERDIDOS=60;
     public static final int NUMERO_ETAPAS=1001;
     public static final int NUMERO_ESPERA=3*10;
@@ -25,7 +25,7 @@ public class Constants {
 
     /**FIGURA --> CIRCULO**/
     public static final double RADIO = 7.0;
-    public static final Point CENTER = new Point(10.0, 15.0);
+    public static final Point CENTER = new Point(25.0, 25.0);
 
     /**FIGURA --> CUADRADP**/
     public static final double EJE_X_MINIMO_FIGURA=5.0;

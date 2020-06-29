@@ -199,10 +199,10 @@ public class Agente {
                 PuntosMinimos.add(listaDeTresUltimasEvaluaciones.get(2));
             }
         }
-        if (result.distance(Tablero.getInstance().getTablero().get(this)) > 1) {
-//            System.out.println(result.distance(Tablero.getInstance().getTablero().get(this)) + "--------------------" +
-//                    Tablero.getInstance().agentesCercanosNoPerdidos(this).size());
-        }
+//        if (result.distance(Tablero.getInstance().getTablero().get(this)) > 1) {
+////            System.out.println(result.distance(Tablero.getInstance().getTablero().get(this)) + "--------------------" +
+////                    Tablero.getInstance().agentesCercanosNoPerdidos(this).size());
+//        }
         return result;
 
     }
@@ -308,13 +308,13 @@ public class Agente {
             this.posicion = solTrilateracion;
             this.listaTrilateraciones.add(solTrilateracion);
         }
-        if (Tablero.getInstance().getEtapa() % Constants.NUM_DE_PASOS_PARa_MEDIAR_LASTRILATERACIONES == 0) {
-            if (listaTrilateraciones.size() >= 1) {
-                this.posicionAntigua = this.posicion;
-                this.posicion = mediaTrilateracion();
-                this.listaTrilateraciones = new ArrayList<>();
-            }
-        }
+//        if (Tablero.getInstance().getEtapa() % Constants.NUM_DE_PASOS_PARa_MEDIAR_LASTRILATERACIONES == 0) {
+//            if (listaTrilateraciones.size() >= 1) {
+//                this.posicionAntigua = this.posicion;
+//                this.posicion = mediaTrilateracion();
+//                this.listaTrilateraciones = new ArrayList<>();
+//            }
+//        }
     }
 
     //tresAgentesDeUnaLista:

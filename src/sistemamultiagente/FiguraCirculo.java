@@ -1,7 +1,5 @@
 package sistemamultiagente;
 
-import sim.field.continuous.Continuous2D;
-
 public class FiguraCirculo {
 
     /**

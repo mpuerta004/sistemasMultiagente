@@ -8,7 +8,7 @@ public class Agente {
     /**
      * ATRIBUTOS
      */
-    private final FiguraCuadrado figura = new FiguraCuadrado();
+    private  FiguraInterface figura =Constants.FIGURA;
 
     private Integer id;
     private boolean perdido;
@@ -18,6 +18,7 @@ public class Agente {
     private HashMap<Agente, Double> listaDistanciaSensor = new HashMap<>();
     private Point posicionAntigua;
     private List<Point> posicionesDentroFigura = new ArrayList<>();
+    private int contadorMovimiento;
 
 
     /**
@@ -34,9 +35,12 @@ public class Agente {
             this.posicionAntigua = null;
             this.posicionesDentroFigura = new ArrayList<>();
         }
+
         this.listaTrilateraciones = new ArrayList<>();
         this.vectorMovimiento = new Vector(0.0, 0.0);
         this.id = id;
+
+        this.contadorMovimiento = 0;
 
     }
 
@@ -347,9 +351,11 @@ public class Agente {
     //Si el agente esta fuera de la figura, debe moverse hacia una direccion aleatoria, dentro del rango de movimiento
     //que tiene.
     private Vector movFuera() {
-        double r1;
-        double r2;
+
+        double r1 = 0.0;
+        double r2 = 0.0;
         double distanciaMaxMov = Constants.DISTANCIA_MAX_MOV;
+        List<Agente> listaAgentes = Tablero.getInstance().agentesCercanosNoPerdidos(this);
         if (Math.random() < 0.5) {
             r1 = -Math.random() * distanciaMaxMov;
         } else {
@@ -360,6 +366,7 @@ public class Agente {
         } else {
             r2 = Math.random() * distanciaMaxMov;
         }
+//
 
         return new Vector(r1, r2);
     }
@@ -383,24 +390,10 @@ public class Agente {
                 soly -= diferenciaPosiciones.getY() * (Constants.RADIO_DE_REPULSION - distance) / distance;
             }
         }
-//            //todo esto no se si debe estar el if.
-//            // if (figura.isDentroFigura(agente.getPosicion())) {
-//            distanciaAgente = Tablero.getInstance().sensorAgente(this, agente);
-//            if (distanciaAgente < Constants.RADIO_DE_REPULSION) {
-//                diferenciaPosiciones = this.posicion.sub(agente.getPosicion());
-//                repulsionPorEseAgente = diferenciaPosiciones.div(distanciaAgente);
-//                //todo
-//                //if (-distanciaAgente + Constants.RADIO_DE_REPULSION > 0.0) {
-//                //repulsionPorEseAgente = repulsionPorEseAgente.scale(-1.0);
-//                //System.out.println("Repulsion por agente"+ solx + " Y :"+ soly)
-//                solx = solx + repulsionPorEseAgente.getX();
-//                soly = soly + repulsionPorEseAgente.getY();
-//            }
-//        }
 
         Vector vectorMovimiento = new Vector(solx, soly);
 
-        Double modulo = vectorMovimiento.distance(new Vector(0.0, 0.0));
+        //Double modulo = vectorMovimiento.distance(new Vector(0.0, 0.0));
 
         while (!figura.isDentroFigura(this.posicion.add(vectorMovimiento))) {
             double r1 = Math.random();
@@ -426,37 +419,58 @@ public class Agente {
     public void calcularVectorMovimiento() {
         if (this.perdido) { // esta perdido.
             this.vectorMovimiento = this.movFuera();
+            this.contadorMovimiento = 0;
         } else { // no esta perdido
+//            /**todo this*/
             if (this.posicionesDentroFigura.size() >= 1 && !figura.isDentroFigura(this.posicion)) {
-                for (Point punto : this.posicionesDentroFigura) {
-                    Double distance = this.posicion.distance(punto);
-                    if (distance < Constants.DISCANCIA_MAX_SENSOR) {
-                        Point posicion = punto.sub(this.posicion);
-                        double modulo = posicion.distance(new Point(0.0, 0.0));
-                        posicion = posicion.div(modulo);
-                        posicion = posicion.scale(Constants.DISTANCIA_MAX_MOV);
-                        this.vectorMovimiento = new Vector(posicion.getX(), posicion.getY());
-                        break;
+                this.contadorMovimiento = this.contadorMovimiento + 1;
+                if (this.contadorMovimiento > 10) {
+                    System.out.println("HE ECHI ESTO CAMBIOOOOOOOOOOOO");
+                    this.posicionesDentroFigura = new ArrayList<>();
+                    this.contadorMovimiento = 0;
+                    this.vectorMovimiento = this.movFuera();
+                } else {
+                    for (Point punto : this.posicionesDentroFigura) {
+                        Double distance = this.posicion.distance(punto);
+                        if (distance < Constants.DISCANCIA_MAX_SENSOR) {
+                            Point posicion = punto.sub(this.posicion);
+                            double modulo = posicion.distance(new Point(0.0, 0.0));
+                            posicion = posicion.div(modulo);
+                            posicion = posicion.scale(Constants.DISTANCIA_MAX_MOV);
+                            this.vectorMovimiento = new Vector(posicion.getX(), posicion.getY());
+                            break;
+                        } else {
+                            this.vectorMovimiento = this.movFuera();
+                            this.contadorMovimiento = 0;
+                        }
                     }
                 }
+//                /*todo this*/
 
-
-//            if (this.posicionAntigua != null && figura.isDentroFigura(this.posicionAntigua) && !figura.isDentroFigura(this.posicion)) {
-//                // vectoMov + this.pocision = this.posicionAntigua.
-//                Point posicion = this.posicionAntigua.sub(this.posicion);
-//                double modulo = posicion.distance(new Point(0.0, 0.0));
-//                posicion = posicion.div(modulo);
-//                posicion = posicion.scale(Constants.DISTANCIA_MAX_MOV);
-//                this.vectorMovimiento = new Vector(posicion.getX(), posicion.getY());
-
-            } else if (figura.isDentroFigura(this.posicion)) {
-                //Tablero.getInstance().getTablero().get(this))) { // esta dentro de la figura
-                this.vectorMovimiento = this.movDentro();
-            } else {
-                this.vectorMovimiento = this.movFuera();
+           } else
+                if (figura.isDentroFigura(this.posicion)) {
+                    //Tablero.getInstance().getTablero().get(this))) { // esta dentro de la figura
+                    this.vectorMovimiento = this.movDentro();
+                    this.contadorMovimiento = 0;
+//                /**todo this*/
+                    List<Agente> agenteDentroRadioDeRepulsion = new ArrayList<>();
+                    for (Agente agente : Tablero.getInstance().agentesCercanosNoPerdidos(this)) {
+                        if (this.getPosicion().distance(agente.getPosicion()) < Constants.DISCANCIA_MAX_SENSOR) {
+                            agenteDentroRadioDeRepulsion.add(agente);
+                        }
+                    }
+                    if (agenteDentroRadioDeRepulsion.size() < Constants.NUMERO_AGENTES_CERCANOS_PARA_PENSAR_QUE_ESTAS_EN_LA_FIGURA) {
+                        //System.out.println("-----------------------");
+                        this.vectorMovimiento = this.movFuera();
+                    }
+//                /**todo this*/
+                } else {
+                    this.vectorMovimiento = this.movFuera();
+                    this.contadorMovimiento = 0;
+                }
             }
         }
-    }
+
 
     //actualizarPosicion:
     //si el agente no esta perdido, es decir tiene posicion, sumo su posicion y el vector movimiento para definir su
@@ -471,6 +485,7 @@ public class Agente {
                     Constants.ERROR_MOV * Tablero.getInstance().errorUniforme(Constants.DISTANCIA_MAX_MOV)));
 
             this.posicion = Tablero.getInstance().posicionModuloTablero(nueva);
+//            /** todo this:*/
             if (this.listaDistanciaSensor.keySet().size() > 3) {
                 for (Agente agente : this.listaDistanciaSensor.keySet()) {
                     this.listaDistanciaSensor.put(agente, agente.getPosicion().distance(this.posicion));
@@ -479,6 +494,7 @@ public class Agente {
                 this.posicion = solTrilateracion;
                 this.listaTrilateraciones.add(solTrilateracion);
             }
+//            /** todo this:*/
         }
     }
 

@@ -9,6 +9,8 @@ import java.awt.image.BufferedImage;
 
 public class GUI extends JFrame {
 
+    public FiguraInterface figura = Constants.FIGURA;
+
     public GUI(double width, double height) {
         super("Sistema Multiagente");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -31,17 +33,17 @@ public class GUI extends JFrame {
         g2d.setPaint(Color.GRAY);
         g2d.fill(new Rectangle2D.Double(0.0,50+(Constants.EJE_Y_MAXIMO)*15.0,  5000000,50));
         //dibujo la figura
-        FiguraCuadrado figura = new FiguraCuadrado();
+        //FiguraInterface figura = Constants.FIGURA;
 //        Point centroFigura = redimensionarizar(Constants.CENTER, 2 * Constants.RADIO);
-        g2d.setPaint(Color.BLACK);
-        g2d.fill(new Rectangle2D.Double(Constants.EJE_X_MINIMO_FIGURA*15+50, 50+Constants.EJE_X_MINIMO_FIGURA*15,
-                2 * ((Constants.EJE_Y_MAXIMO_FIGURA-Constants.EJE_X_MINIMO_FIGURA)/2)* 15,
-                2 * ((Constants.EJE_Y_MAXIMO_FIGURA-Constants.EJE_X_MINIMO_FIGURA)/2)* 15));
+//        g2d.setPaint(Color.BLACK);
+//        g2d.fill(new Rectangle2D.Double(Constants.EJE_X_MINIMO_FIGURA*15+50, 50+Constants.EJE_X_MINIMO_FIGURA*15,
+//                2 * ((Constants.EJE_Y_MAXIMO_FIGURA-Constants.EJE_X_MINIMO_FIGURA)/2)* 15,
+//                2 * ((Constants.EJE_Y_MAXIMO_FIGURA-Constants.EJE_X_MINIMO_FIGURA)/2)* 15));
         //Dibujar los agentes en la posicion en la que estan.
         Tablero.getInstance().getTablero().keySet().forEach(agente -> {
                     if (agente.getPerdido()) {
                         g2d.setPaint(Color.RED);
-                    } else if (figura.isDentroFigura(agente.getPosicion())){
+                    } else if (this.figura.isDentroFigura(agente.getPosicion())){
                             //Constants.CENTER.distance(agente.getPosicion()) <= Constants.RADIO) {
                         g2d.setPaint(Color.WHITE);
                     } else {

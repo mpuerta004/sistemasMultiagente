@@ -1,9 +1,6 @@
 package sistemamultiagente;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Tablero {
@@ -44,6 +41,7 @@ public class Tablero {
     public HashMap<Agente, Point> getTablero() {
         return tablero;
     }
+    public void setTablero (HashMap<Agente, Point>  nuevoTablero){tablero=nuevoTablero;}
     //------------------------------------------------------------------------------------------------------------------
 
     /**
@@ -172,8 +170,8 @@ public class Tablero {
         //todo EGO: creo que hay formas mejores de hacer esto
         tablero.put(agente, new Point(Constants.EJE_X_MAXIMO * 1000, Constants.EJE_Y_MAXIMO * 1000));
         while (conflictos(nuevaPosicion)) {
-            agente.setVectorMovimiento(new Vector(agente.getVectorMovimiento().getX()-Constants.TAMAÑO_AGENTE,
-                    agente.getVectorMovimiento().getY()-Constants.TAMAÑO_AGENTE) );
+            agente.setVectorMovimiento(new Vector(agente.getVectorMovimiento().getX() +Math.signum(agente.getVectorMovimiento().getX())* Constants.TAMAÑO_AGENTE,
+                    agente.getVectorMovimiento().getY() +Math.signum(agente.getVectorMovimiento().getY())* Constants.TAMAÑO_AGENTE));
             //agente.calcularVectorMovimiento();
             nuevaPosicion = posicionModuloTablero(posicionAntigua.add(agente.getVectorMovimiento()));
         }
@@ -190,15 +188,15 @@ public class Tablero {
         if (!this.isDentro(nuevaPosicion)) {
             while (posicionX < 0.0) {
                 //posicionX = 0.0;
-                posicionX= ejeXMaximo -posicionX;
+                posicionX = ejeXMaximo - posicionX;
             }
             while (posicionX > ejeXMaximo) {
                 posicionX =
-                posicionX - ejeXMaximo;
+                        posicionX - ejeXMaximo;
             }
             while (posicionY < 0.0) {
                 posicionY =
-                ejeYMaximo - posicionY;
+                        ejeYMaximo - posicionY;
             }
             while (posicionY > ejeYMaximo) {
                 posicionY = posicionY - ejeYMaximo;
@@ -219,10 +217,24 @@ public class Tablero {
             return false;
         }
     }
-    public void reset(){
+
+    public void reset() {
         tablero = new HashMap<>();
         this.etapa = 0;
     }
 
+    public void eliminar(Point punto) {
+        HashMap<Agente, Point> nuevoTablero = Tablero.getInstance().getTablero();
+        List<Agente> listaAgentesAEliminar=new ArrayList<>();
+        for (Agente agente : Tablero.getInstance().getTablero().keySet() ) {
+            if (agente.getPosicion().getX()>punto.getX() && agente.getPosicion().getY()>punto.getY()) {
+                listaAgentesAEliminar.add(agente);
+            }
+        }
+        for(Agente agente: listaAgentesAEliminar){
+            nuevoTablero.remove(agente);
+        }
+        Tablero.getInstance().setTablero(nuevoTablero);
+    }
 
 }

@@ -1,6 +1,6 @@
 package sistemamultiagente;
 
-public class FiguraCuadrado {
+public class FiguraCuadrado implements FiguraInterface{
 
 
     /**

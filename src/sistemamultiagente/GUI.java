@@ -32,22 +32,17 @@ public class GUI extends JFrame {
         g2d.fill(new Rectangle2D.Double(50+(Constants.EJE_X_MAXIMO)*15.0,0.0,  50,500000));
         g2d.setPaint(Color.GRAY);
         g2d.fill(new Rectangle2D.Double(0.0,50+(Constants.EJE_Y_MAXIMO)*15.0,  5000000,50));
-        //dibujo la figura
-        //FiguraInterface figura = Constants.FIGURA;
-//        Point centroFigura = redimensionarizar(Constants.CENTER, 2 * Constants.RADIO);
-//        g2d.setPaint(Color.BLACK);
-//        g2d.fill(new Rectangle2D.Double(Constants.EJE_X_MINIMO_FIGURA*15+50, 50+Constants.EJE_X_MINIMO_FIGURA*15,
-//                2 * ((Constants.EJE_Y_MAXIMO_FIGURA-Constants.EJE_X_MINIMO_FIGURA)/2)* 15,
-//                2 * ((Constants.EJE_Y_MAXIMO_FIGURA-Constants.EJE_X_MINIMO_FIGURA)/2)* 15));
+        g2d.setPaint(Color.RED);
+        g2d.drawString(Tablero.getInstance().getEtapa() + "", Float.parseFloat(40 + ""),
+                Float.parseFloat(40+ ""));
         //Dibujar los agentes en la posicion en la que estan.
         Tablero.getInstance().getTablero().keySet().forEach(agente -> {
                     if (agente.getPerdido()) {
                         g2d.setPaint(Color.RED);
                     } else if (this.figura.isDentroFigura(agente.getPosicion())){
-                            //Constants.CENTER.distance(agente.getPosicion()) <= Constants.RADIO) {
                         g2d.setPaint(Color.WHITE);
                     } else {
-                        g2d.setPaint(Color.green);
+                        g2d.setPaint(Color.GREEN);
                     }
 
                     Point centroAgente;
@@ -58,8 +53,7 @@ public class GUI extends JFrame {
                             centroAgente.getY()*15+50,
                             (Constants.TAMAÑO_AGENTE * 15),
                             (Constants.TAMAÑO_AGENTE * 15)));
-//                    g2d.drawString(agente.getId() + "", Float.parseFloat(centroAgente.getX()*15+50 + ""),
-//                            Float.parseFloat(centroAgente.getY()*15+50+ ""));
+
                 }
         );
     }

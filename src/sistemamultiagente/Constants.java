@@ -5,9 +5,10 @@ import java.util.ArrayList;
 public class Constants {
 
     public static final int AGENTES_NO_PERDIDOS=12;
-    public static final int AGENTES_PERDIDOS=150;
+    public static final int AGENTES_PERDIDOS=200;
     public static final int NUMERO_ETAPAS=1001;
-    public static final int NUMERO_ESPERA=2*10;
+    public static final int NUMERO_ESPERA=3*10;
+    //public static final int NUMERO_ESPERA_2=3*1000;
 
     /**AGENTE**/
     public static final double DISCANCIA_MAX_SENSOR = 5.0;
@@ -19,7 +20,7 @@ public class Constants {
 
     /**Trilateracion**/
     public static final double LEARNING_RATE=0.001;
-    public static final int NUMERO_MAXIMA_ITERACIONES=  800;
+    public static final int NUMERO_MAXIMA_ITERACIONES= 300;
     public static final double CRITERIO=  0.00001;
 
     /** TABLERO **/
@@ -29,34 +30,39 @@ public class Constants {
     public static final double ERROR_MOV = 0.2;
 
 
-//    public static final FiguraInterface FIGURA = new FiguraCirculo();
-//    public static final FiguraInterface FIGURA = new FiguraCuadrado();
+   public static final FiguraInterface FIGURA = new FiguraCirculo();
+ //   public static final FiguraInterface FIGURA = new FiguraCuadrado();
 //    public static final FiguraInterface FIGURA = new FiguraCirculoDoble();
  //  public static final FiguraInterface FIGURA = new FiguraSonrisa();
-    public static final FiguraInterface FIGURA = new FiguraCara();
+ //   public static final FiguraInterface FIGURA = new FiguraCara();
 
     /**FIGURA --> CIRCULO**/
-    public static final double RADIO = 10.0;
-    public static final Point CENTER = new Point(25.0, 25.0);
+    public static final double RADIO = 7.0;
+    public static final Point CENTER = new Point(15.0, 15.0);
 
 
     /**FIGURA --> CUADRADP**/
     public static final double EJE_X_MINIMO_FIGURA=5.0;
     public static final double EJE_Y_MINIMO_FIGURA=5.0;
-    public static final double EJE_X_MAXIMO_FIGURA=15.0;
-    public static final double EJE_Y_MAXIMO_FIGURA=15.0;
+    public static final double EJE_X_MAXIMO_FIGURA=20.0;
+    public static final double EJE_Y_MAXIMO_FIGURA=20.0;
 
     /** FIGURA -> CIRCULO DOBLE**/
-    public static final  Point  CENTER_FIGURA1= new Point(21.0,13.0);
+    public static final  Point  CENTER_FIGURA1= new Point(22.0,13.0);
     public static final  double RADIO_FIGURA1= 5.0;
-    public static final  Point CENTER_FIGURA2= new Point(13.0,13.0);
+    public static final  Point CENTER_FIGURA2= new Point(11.0,13.0);
     public static final  double RADIO_FIGURA2=5.0;
 
     /** FIGURA -> CIRCULO DOBLE SUPUESPUESTOS **/
-    public static final  Point  CENTER_FIGURA1_SONRISA= new Point(15.0,23.0);
+    public static final  Point  CENTER_FIGURA1_SONRISA= new Point(15.0,20.0);
     public static final  double RADIO_FIGURA1_SONRISA= 5.0;
-    public static final  Point CENTER_FIGURA2_SONRISA= new Point(15.0,18.0);
+    public static final  Point CENTER_FIGURA2_SONRISA= new Point(15.0,17.0);
     public static final  double RADIO_FIGURA2_SONRISA=5.0;
 
+    /** FIGURA -> CIRCULO DOBLE**/
+    public static final  Point  CENTER_FIGURA1_IRIS= new Point(22.0,13.0);
+    public static final  double RADIO_FIGURA1_IRIS= 2.0;
+    public static final  Point CENTER_FIGURA2_IRIS= new Point(11.0,13.0);
+    public static final  double RADIO_FIGURA2_IRIS=2.0;
 
 }

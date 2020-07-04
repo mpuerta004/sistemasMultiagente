@@ -16,6 +16,10 @@ public class Vector {
         this.y = y;
     }
 
+    public Vector( Point x, Point y){
+        this.x = x.getX()-y.getY();
+        this.y = x.getX() - y.getY();
+    }
     public double getX() {
         return this.x;
     }

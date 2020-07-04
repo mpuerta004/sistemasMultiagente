@@ -186,20 +186,26 @@ public class Tablero {
         double ejeXMaximo = Constants.EJE_X_MAXIMO;
         double ejeYMaximo = Constants.EJE_Y_MAXIMO;
         if (!this.isDentro(nuevaPosicion)) {
+
             while (posicionX < 0.0) {
                 //posicionX = 0.0;
-                posicionX = ejeXMaximo - posicionX;
+                //posicionX = ejeXMaximo + posicionX;
+                posicionX= -posicionX;
+
             }
             while (posicionX > ejeXMaximo) {
-                posicionX =
-                        posicionX - ejeXMaximo;
+//                posicionX =
+//////                        posicionX - ejeXMaximo;
+                posicionX = ejeXMaximo - (posicionX - ejeXMaximo);
             }
             while (posicionY < 0.0) {
-                posicionY =
-                        ejeYMaximo - posicionY;
+//                posicionY =
+//                        ejeYMaximo + posicionY;
+                posicionY = -posicionY;
             }
             while (posicionY > ejeYMaximo) {
-                posicionY = posicionY - ejeYMaximo;
+                //posicionY = posicionY - ejeYMaximo;
+                posicionY = ejeYMaximo - (posicionY - ejeYMaximo);
             }
             nuevaPosicion = new Point(posicionX, posicionY);
         }

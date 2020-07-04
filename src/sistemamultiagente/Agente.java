@@ -8,15 +8,14 @@ public class Agente {
     /**
      * ATRIBUTOS
      */
-    private  FiguraInterface figura =Constants.FIGURA;
+    private FiguraInterface figura = Constants.FIGURA;
 
     private Integer id;
     private boolean perdido;
     private Point posicion;
     private List<Point> listaTrilateraciones;
     private Vector vectorMovimiento;
-    private HashMap<Agente, Double> listaDistanciaSensor = new HashMap<>();
-    private Point posicionAntigua;
+    private List<Agente> listaAgentesCNoPerdidos = new ArrayList<>();
     private List<Point> posicionesDentroFigura = new ArrayList<>();
     private int contadorMovimiento;
 
@@ -32,7 +31,6 @@ public class Agente {
         this.perdido = perdido;
         if (perdido) {
             this.posicion = null;
-            this.posicionAntigua = null;
             this.posicionesDentroFigura = new ArrayList<>();
         }
 
@@ -91,69 +89,40 @@ public class Agente {
 
     //PrimeraCoordenadaAgentePerdido ---> le permite saber una posicion aproximada por primera vez al egente que esta
     // perdido, se su posicion.
-    private Point primeraCoordenadaAgentePerdido(HashMap<Agente, Double> tresAgentesCercanosNoPerdidos) {
-        //System.out.println("............................................................................");
-        //Se realiza con el baricentro del triangulo compuesto por las posiciones de los tres agentes cercanos
-        // no perdidos que estan en la lista: tresAgentesCercanosNoPerdido.
-        // Cuidado: la posicion de cualquiera de los agentes de esta lista se debe obtener por la red inalambrica
-        // que se estabrece entre ellos ---> funcion del Tablero.
-        List<Agente> listaAgentes = new ArrayList<>();
-        for (Agente agente : tresAgentesCercanosNoPerdidos.keySet()) {
-            listaAgentes.add(agente);
-        }
+    private Point primeraCoordenadaAgentePerdido(List<Agente> listaAgentes) {
+        Circle circulo1 = new Circle(listaAgentes.get(0).getPosicion(), Tablero.getInstance().sensorAgente(this, listaAgentes.get(0)));
+        Circle circulo2 = new Circle(listaAgentes.get(1).getPosicion(), Tablero.getInstance().sensorAgente(this, listaAgentes.get(1)));
 
-        Circle circulo1 = new Circle(listaAgentes.get(0).getPosicion(),
-                tresAgentesCercanosNoPerdidos.get(listaAgentes.get(0)));
-        Circle circulo2 = new Circle(listaAgentes.get(1).getPosicion(),
-                tresAgentesCercanosNoPerdidos.get(listaAgentes.get(1)));
-        Circle circulo3 = new Circle(listaAgentes.get(2).getPosicion(),
-                tresAgentesCercanosNoPerdidos.get(listaAgentes.get(2)));
+        Circle circulo3 = new Circle(listaAgentes.get(2).getPosicion(), Tablero.getInstance().sensorAgente(this, listaAgentes.get(2)));
 
         List<Point> interseccion_1_2 = circulo1.intersection(circulo2);
         List<Point> interseccion_1_3 = circulo1.intersection(circulo3);
         List<Point> interseccion_2_3 = circulo2.intersection(circulo3);
 
-        //tem.out.println(interseccion_1_2);
-        if (interseccion_1_2.size() == 0 || interseccion_1_3.size() == 0 || interseccion_2_3.size() == 0) {
-            // System.out.println("*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*//*/**/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/");
-        }
+
         if (interseccion_1_2.size() == 1) {
-            //System.out.println(interseccion_1_2.get(0));
-            //System.out.println("Distancia al punto real:" + interseccion_1_2.get(0).distance(Tablero.getInstance().getTablero().get(this)));
             return interseccion_1_2.get(0);
         } else if (interseccion_1_3.size() == 1) {
-            //System.out.println(interseccion_1_3.get(0));
-            //System.out.println("Distancia al punto real:" + interseccion_1_3.get(0).distance(Tablero.getInstance().getTablero().get(this)));
             return interseccion_1_3.get(0);
         } else if (interseccion_2_3.size() == 1) {
-            //System.out.println(interseccion_2_3.get(0));
-            //System.out.println("Distancia al punto real:" + interseccion_2_3.get(0).distance(Tablero.getInstance().getTablero().get(this)));
             return interseccion_2_3.get(0);
         } else {
             Line L1 = new Line(interseccion_1_2.get(0), interseccion_1_2.get(1));
             Line L2 = new Line(interseccion_1_3.get(0), interseccion_1_3.get(1));
             Point interseccion = L1.interseccion(L2);
             if (interseccion.distance(interseccion_1_2.get(0)) < interseccion.distance(interseccion_1_2.get(1))) {
-                //  System.out.println("Distancia al punto real:" + interseccion_1_2.get(0).distance(Tablero.getInstance().getTablero().get(this)));
                 return interseccion_1_2.get(0);
             } else {
-                //System.out.println("Distancia al punto real:" + interseccion_1_2.get(1).distance(Tablero.getInstance().getTablero().get(this)));
                 return interseccion_1_2.get(1);
             }
         }
-    }
-
-    private HashMap<Agente, Double> DiccionarioAgenteSensor(List<Agente> agentesCercanosNoPerdidos) {
-        HashMap<Agente, Double> listaDistanciaSensor = new HashMap<>();
-        agentesCercanosNoPerdidos.forEach(a -> listaDistanciaSensor.put(a, Tablero.getInstance().sensorAgente(this, a)));
-        return listaDistanciaSensor;
     }
 
     //Trilateracion:
     // Con las posiciones de los agentes de la lista agenterCercanosNoPerdidos y la distancia a ellos(---> Funciones del
     // tablero) vamos a calcular la posicion que minimice los datos, (la interseccion de los circulos de centro las
     //posiciones de los agentes y radio la distancia a ellos).
-    private Point trilateracion() {
+    private Point trilateracion(int numero) {
         ArrayList<Double> PuntosMinimos = new ArrayList<>();
         ArrayList<Point> listaDeTresPosiciones = new ArrayList<>();
         ArrayList<Double> listaDeTresUltimasEvaluaciones = new ArrayList<>();
@@ -161,7 +130,7 @@ public class Agente {
         listaDeTresPosiciones.add(this.posicion);
         listaDeTresPosiciones.add(this.posicion);
         listaDeTresPosiciones.add(this.posicion);
-        double insertar = evaluarFuncionParaTrilateracion(this.posicion);
+        double insertar = evaluarFuncionParaTrilateracion(this.posicion, numero);
         listaDeTresUltimasEvaluaciones.add(insertar);
         listaDeTresUltimasEvaluaciones.add(insertar);
         listaDeTresUltimasEvaluaciones.add(insertar);
@@ -174,24 +143,13 @@ public class Agente {
         for (int i = 0; i < numeroIteracionesMaximas; i++) {
             listaDeTresUltimasEvaluaciones.remove(0);
             listaDeTresPosiciones.remove(0);
-            gradientes = gradiente(listaDeTresPosiciones.get(1));
-            //if(Math.abs(gradientes.get(0))>Math.abs(gradientes.get(1))) {
-            listaDeTresPosiciones.add(Tablero.getInstance().posicionModuloTablero(
-                    new Point(
-                            listaDeTresPosiciones.get(1).getX() - mulx * gradientes.get(0),
-                            listaDeTresPosiciones.get(1).getY() - mulx * gradientes.get(1)
-                    )));
-//            }else{ listaDeTresPosiciones.add(Tablero.getInstance().posicionModuloTablero(
-//                    new Point(
-//                    listaDeTresPosiciones.get(1).getX() ,
-//                    listaDeTresPosiciones.get(1).getY() - mulx * gradientes.get(1)
-//            )));}
+            gradientes = gradiente(listaDeTresPosiciones.get(1), numero);
+            listaDeTresPosiciones.add(Tablero.getInstance().posicionModuloTablero(new Point(listaDeTresPosiciones.get(1).getX() - mulx * gradientes.get(0), listaDeTresPosiciones.get(1).getY() - mulx * gradientes.get(1))));
 
-            listaDeTresUltimasEvaluaciones.add(
-                    evaluarFuncionParaTrilateracion(
-                            listaDeTresPosiciones.get(2)));
+
+            listaDeTresUltimasEvaluaciones.add(evaluarFuncionParaTrilateracion(listaDeTresPosiciones.get(2), numero));
             if (Math.abs(mulx * gradientes.get(0)) < criterio || Math.abs(mulx * gradientes.get(1)) < criterio) {
-                // System.out.println("HE SALIDO POR SQUI");
+
                 result = listaDeTresPosiciones.get(2);
                 break;
             }
@@ -203,59 +161,47 @@ public class Agente {
                 PuntosMinimos.add(listaDeTresUltimasEvaluaciones.get(2));
             }
         }
-//        if (result.distance(Tablero.getInstance().getTablero().get(this)) > 1) {
-////            System.out.println(result.distance(Tablero.getInstance().getTablero().get(this)) + "--------------------" +
-////                    Tablero.getInstance().agentesCercanosNoPerdidos(this).size());
-//        }
         return result;
-
     }
-//        System.out.println(listaDeTresUltimasEvaluaciones.get(0)+ "---"+listaDeTresUltimasEvaluaciones.get(1)+ "---"+listaDeTresUltimasEvaluaciones.get(2)+ "---" );
-//        System.out.println("--------------------------------------------------------------------------------------------");
-    //return Tablero.getInstance().posicionModuloTablero(listaDeTresPosiciones.get(1));
-    //return PuntosMinimos.
 
 
-    private double evaluarFuncionParaTrilateracion(Point posicionAgenteCalculando) {
+    private double evaluarFuncionParaTrilateracion(Point posicionAgenteCalculando, int numero) {
         double resultado = 0.0;
         Point posicionAgente;
         double distanciaAgente;
 
-        for (Agente agente : this.listaDistanciaSensor.keySet()) {
-            //distanciaAgente = this.listaDistanciaSensor.get(agente);
-            distanciaAgente = Tablero.getInstance().sensorAgente(this, agente);
-            //posicionAgente = Tablero.getInstance().redInalambrica(agente);
+        for (Agente agente : this.listaAgentesCNoPerdidos) {
+
+            if (numero == 2) {
+                distanciaAgente = posicionAgenteCalculando.distance(agente.getPosicion());
+            } else {
+                distanciaAgente = Tablero.getInstance().sensorAgente(this, agente);
+            }
+
             resultado = resultado + Math.abs(posicionAgenteCalculando.distance(agente.getPosicion()) - distanciaAgente);
         }
         return resultado;
     }
 
-    private List<Double> gradiente(Point posicionAgenteCalculando) {
+    private List<Double> gradiente(Point posicionAgenteCalculando, int numero) {
         Point posicionAgente;
         ArrayList<Double> derivadasParciales = new ArrayList<>();
         double distanciaAgente;
         double calculo;
         derivadasParciales.add(0.0); // La primera sera la deriavada del eje x.
         derivadasParciales.add(0.0);
-        for (Agente agente : this.listaDistanciaSensor.keySet()) {
-            //distanciaAgente = this.listaDistanciaSensor.get(agente);
-            distanciaAgente = Tablero.getInstance().sensorAgente(this, agente);
+        for (Agente agente : this.listaAgentesCNoPerdidos) {
+            if (numero == 2) {
+                distanciaAgente = posicionAgenteCalculando.distance(agente.getPosicion());
+            } else {
+                distanciaAgente = Tablero.getInstance().sensorAgente(this, agente);
+            }
+
             posicionAgente = Tablero.getInstance().redInalambrica(agente);
             calculo = posicionAgente.distance(posicionAgenteCalculando) - distanciaAgente;
             if (calculo != 0.0) {
-                derivadasParciales.set(0,
-                        derivadasParciales.get(0) + (
-                                (calculo / Math.abs(calculo)) * (
-                                        (posicionAgenteCalculando.getX() - posicionAgente.getX())
-                                                / posicionAgente.distance(posicionAgenteCalculando))
-                        )
-                );
-                derivadasParciales.set(1,
-                        derivadasParciales.get(1) +
-                                (
-                                        (calculo / Math.abs(calculo)) * (
-                                                (posicionAgenteCalculando.getY() - posicionAgente.getY())
-                                                        / posicionAgente.distance(posicionAgenteCalculando))));
+                derivadasParciales.set(0, derivadasParciales.get(0) + ((calculo / Math.abs(calculo)) * ((posicionAgenteCalculando.getX() - posicionAgente.getX()) / posicionAgente.distance(posicionAgenteCalculando))));
+                derivadasParciales.set(1, derivadasParciales.get(1) + ((calculo / Math.abs(calculo)) * ((posicionAgenteCalculando.getY() - posicionAgente.getY()) / posicionAgente.distance(posicionAgenteCalculando))));
             }
         }
         return derivadasParciales;
@@ -275,8 +221,7 @@ public class Agente {
                 sumX += nuevo.getX();
                 sumY += nuevo.getY();
             }
-            sol = new Point(sumX / this.listaTrilateraciones.size(),
-                    sumY / this.listaTrilateraciones.size());
+            sol = new Point(sumX / this.listaTrilateraciones.size(), sumY / this.listaTrilateraciones.size());
             sol = Tablero.getInstance().posicionModuloTablero(sol);
             return sol;
         } else {
@@ -293,53 +238,35 @@ public class Agente {
     // Si no se hace asi va peor.
     public void consensoDeCoordenadas() {
         List<Agente> agentesCercanosNoPerdidos = Tablero.getInstance().agentesCercanosNoPerdidos(this);
-        this.listaDistanciaSensor = DiccionarioAgenteSensor(agentesCercanosNoPerdidos);
+        this.listaAgentesCNoPerdidos = Tablero.getInstance().agentesCercanosNoPerdidos(this);
         if (agentesCercanosNoPerdidos.size() >= 3) {
-            //List<Agente> tresAgentesCercanosNoPerdidos = tresAgentesDeUnaLista(agentesCercanosNoPerdidos);
+            List<Agente> tresAgentesCercanosNoPerdidos = tresAgentesDeUnaLista(agentesCercanosNoPerdidos);
             if (this.perdido) {
-                // si esta perdido, entonces calcula la primera coordena ---> Baricentro.
-                this.posicion = this.primeraCoordenadaAgentePerdido(tresAgentesDiccionario(agentesCercanosNoPerdidos));
+                // si esta perdido, entonces calcula la primera coordena ---> Baricentro
+                this.posicion = this.primeraCoordenadaAgentePerdido(tresAgentesCercanosNoPerdidos);
                 this.perdido = false;
-
             }
-            //System.out.println(this.posicion);
             if (figura.isDentroFigura(this.posicion)) {
-                //System.out.println(this.posicionesDentroFigura);
                 this.posicionesDentroFigura.add(this.posicion);
             }
-            this.posicionAntigua = this.posicion;
-            Point solTrilateracion = this.trilateracion();
+            Point solTrilateracion = this.trilateracion(1);
             this.posicion = solTrilateracion;
-            this.listaTrilateraciones.add(solTrilateracion);
+            /* si quieres hacer la media de las trilateraciones */
+//            this.listaTrilateraciones.add(solTrilateracion);
         }
+        /* si quieres hacer la media de las trilateraciones */
 //        if (Tablero.getInstance().getEtapa() % Constants.NUM_DE_PASOS_PARa_MEDIAR_LASTRILATERACIONES == 0) {
 //            if (listaTrilateraciones.size() >= 1) {
-//                this.posicionAntigua = this.posicion;
 //                this.posicion = mediaTrilateracion();
 //                this.listaTrilateraciones = new ArrayList<>();
-//            }
-//        }
-    }
+//            }}
+     }
 
     //tresAgentesDeUnaLista:
     //Voy a coger de la lista de agentes cercanos no perdidos, 3 cualquira de ellos.
     private List<Agente> tresAgentesDeUnaLista(List<Agente> agentesCercanosNoPerdidos) {
         Collections.shuffle(agentesCercanosNoPerdidos); // desordeno la lista!
         return agentesCercanosNoPerdidos.subList(0, 3);
-    }
-
-    private HashMap<Agente, Double> tresAgentesDiccionario(List<Agente> agentesCercanosNoPerdidos) {
-        Collections.shuffle(agentesCercanosNoPerdidos); // desordeno la lista!
-        HashMap<Agente, Double> listaResult = new HashMap<>();
-        HashMap<Agente, Double> lista = DiccionarioAgenteSensor(agentesCercanosNoPerdidos);
-        for (Agente agente : lista.keySet()) {
-            listaResult.put(agente, lista.get(agente));
-            if (listaResult.size() == 3) {
-                continue;
-            }
-
-        }
-        return listaResult;
     }
 
     /**
@@ -351,11 +278,10 @@ public class Agente {
     //Si el agente esta fuera de la figura, debe moverse hacia una direccion aleatoria, dentro del rango de movimiento
     //que tiene.
     private Vector movFuera() {
-
-        double r1 = 0.0;
-        double r2 = 0.0;
+        double r1;
+        double r2;
         double distanciaMaxMov = Constants.DISTANCIA_MAX_MOV;
-        List<Agente> listaAgentes = Tablero.getInstance().agentesCercanosNoPerdidos(this);
+
         if (Math.random() < 0.5) {
             r1 = -Math.random() * distanciaMaxMov;
         } else {
@@ -366,8 +292,6 @@ public class Agente {
         } else {
             r2 = Math.random() * distanciaMaxMov;
         }
-//
-
         return new Vector(r1, r2);
     }
 
@@ -376,8 +300,6 @@ public class Agente {
     //La calcula la repulsion que cada agente ejerce sobre otro agente, cuando estan dentro de la figura, el resultado de
     //ña suma de las respulsiones es lo que el agente se va a mover.
     private Vector movDentro() {
-        double distanciaAgente;
-        Point repulsionPorEseAgente;
         double solx = 0.0;
         double soly = 0.0;
         Point diferenciaPosiciones;
@@ -417,15 +339,17 @@ public class Agente {
     //probabilidad es menor del 0.75 entonces me quedo quiero no me muevo, en caso contrario (con posibilidad pequeña
     //creo un movumiento aleatoria (MovFuera) asegurandome que este me deja dentro de la figura.
     public void calcularVectorMovimiento() {
+        if(this.posicionesDentroFigura.size()>20){this.posicionesDentroFigura=this.posicionesDentroFigura.subList(0, 5);}
         if (this.perdido) { // esta perdido.
             this.vectorMovimiento = this.movFuera();
             this.contadorMovimiento = 0;
         } else { // no esta perdido
 //            /**todo this*/
+            // si he conocido algun punto denro de la figura y estoy fuera
             if (this.posicionesDentroFigura.size() >= 1 && !figura.isDentroFigura(this.posicion)) {
                 this.contadorMovimiento = this.contadorMovimiento + 1;
                 if (this.contadorMovimiento > 10) {
-                    System.out.println("HE ECHI ESTO CAMBIOOOOOOOOOOOO");
+                    // esto significa que le punto que creo que esta dentor de la figura no esta en la figura
                     this.posicionesDentroFigura = new ArrayList<>();
                     this.contadorMovimiento = 0;
                     this.vectorMovimiento = this.movFuera();
@@ -446,30 +370,27 @@ public class Agente {
                     }
                 }
 //                /*todo this*/
-
-           } else
-                if (figura.isDentroFigura(this.posicion)) {
-                    //Tablero.getInstance().getTablero().get(this))) { // esta dentro de la figura
-                    this.vectorMovimiento = this.movDentro();
-                    this.contadorMovimiento = 0;
+            } else
+            if (figura.isDentroFigura(this.posicion)) {
+                this.vectorMovimiento = this.movDentro();
+                this.contadorMovimiento = 0;
 //                /**todo this*/
-                    List<Agente> agenteDentroRadioDeRepulsion = new ArrayList<>();
-                    for (Agente agente : Tablero.getInstance().agentesCercanosNoPerdidos(this)) {
-                        if (this.getPosicion().distance(agente.getPosicion()) < Constants.DISCANCIA_MAX_SENSOR) {
-                            agenteDentroRadioDeRepulsion.add(agente);
-                        }
+                List<Agente> agenteDentroRadioDeRepulsion = new ArrayList<>();
+                for (Agente agente : Tablero.getInstance().agentesCercanosNoPerdidos(this)) {
+                    if (this.getPosicion().distance(agente.getPosicion()) < Constants.DISCANCIA_MAX_SENSOR) {
+                        agenteDentroRadioDeRepulsion.add(agente);
                     }
-                    if (agenteDentroRadioDeRepulsion.size() < Constants.NUMERO_AGENTES_CERCANOS_PARA_PENSAR_QUE_ESTAS_EN_LA_FIGURA) {
-                        //System.out.println("-----------------------");
-                        this.vectorMovimiento = this.movFuera();
-                    }
-//                /**todo this*/
-                } else {
-                    this.vectorMovimiento = this.movFuera();
-                    this.contadorMovimiento = 0;
                 }
+                if (agenteDentroRadioDeRepulsion.size() < Constants.NUMERO_AGENTES_CERCANOS_PARA_PENSAR_QUE_ESTAS_EN_LA_FIGURA) {
+                    this.vectorMovimiento = this.movFuera();
+                }
+                /**todo this*/
+            } else {
+                this.vectorMovimiento = this.movFuera();
+                this.contadorMovimiento = 0;
             }
         }
+    }
 
 
     //actualizarPosicion:
@@ -480,20 +401,24 @@ public class Agente {
         if (this.posicion != null) {
             Point nueva = this.posicion.
                     add(this.vectorMovimiento);
-            nueva = nueva.add(new Point(
-                    Constants.ERROR_MOV * Tablero.getInstance().errorUniforme(Constants.DISTANCIA_MAX_MOV),
-                    Constants.ERROR_MOV * Tablero.getInstance().errorUniforme(Constants.DISTANCIA_MAX_MOV)));
-
+            nueva = nueva.add(new Point(Constants.ERROR_MOV * Tablero.getInstance().errorUniforme(Constants.DISTANCIA_MAX_MOV), Constants.ERROR_MOV * Tablero.getInstance().errorUniforme(Constants.DISTANCIA_MAX_MOV)));
+            Point posicionAntigua= this.posicion;
             this.posicion = Tablero.getInstance().posicionModuloTablero(nueva);
 //            /** todo this:*/
-            if (this.listaDistanciaSensor.keySet().size() > 3) {
-                for (Agente agente : this.listaDistanciaSensor.keySet()) {
-                    this.listaDistanciaSensor.put(agente, agente.getPosicion().distance(this.posicion));
-                }
-                Point solTrilateracion = this.trilateracion();
-                this.posicion = solTrilateracion;
-                this.listaTrilateraciones.add(solTrilateracion);
-            }
+//
+
+//            List<Agente> listaAgentes = new ArrayList<>();
+//            this.listaAgentesCNoPerdidos.forEach(agente -> {
+//                if (agente.getPosicion().distance(this.posicion) < Constants.DISCANCIA_MAX_SENSOR) {
+//
+//                    listaAgentes.add(agente);               }
+//            });
+//            this.listaAgentesCNoPerdidos.removeAll(listaAgentes);
+//            if (this.listaAgentesCNoPerdidos.size() > 3) {
+//                Point solTrilateracion = this.trilateracion(2);
+//                this.posicion = solTrilateracion;
+//
+//            }
 //            /** todo this:*/
         }
     }

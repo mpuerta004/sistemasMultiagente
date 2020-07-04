@@ -2,25 +2,16 @@ import sistemamultiagente.*;
 
 import javax.swing.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.PrintWriter;
 
 public class Main {
 
     public static void main(String[] args) {
         try {
-            String ruta = "C:\\Users\\Maite\\Desktop\\Sistemas Multiagente\\Probar a hacer un fichero\\pruebaF3999.csv";
+            String ruta = "C:\\Users\\Maite\\Desktop\\Sistemas Multiagente\\Pruebas_Finales\\prueba_BORRAR.csv";
             PrintWriter writer = new PrintWriter(ruta, "UTF-8");
             Main main = new Main();
-            for (int j = 0; j < 10; j++) {
+            for (int j = 0; j <10; j++) {
                 main.execute(writer);
                 Tablero.getInstance().reset();
             }
@@ -32,21 +23,21 @@ public class Main {
 
     private void execute(PrintWriter writer) {
 
-        String ListaPorCentajeAgentesDentroReal = "";//
-        String ListaPorCentajeAgentesDentro = ""; //= new ArrayList<>();
-        String SincronizacionAgentes = ""; //= new ArrayList<>();
+        String ListaPorCentajeAgentesDentroReal = "";
+        String ListaPorCentajeAgentesDentro = "";
+        String SincronizacionAgentes = "";
         String SincronizacionLOCALAgentes = "";
         String SincronizacionDentroFigura = "";
-        String EtapasParaEstadisticas = ""; //= new ArrayList<>();
+        String EtapasParaEstadisticas = "";
         String CentroFguraX = "";
         String CentroFguraY = "";
 
         Tablero tablero = Tablero.getInstance();
         double EjeXMaximo = Constants.EJE_X_MAXIMO;
-        double EjeYmaximo = Constants.EJE_Y_MAXIMO;
-        GUI application = new GUI(EjeXMaximo, EjeYmaximo);
+        double EjeYMaximo = Constants.EJE_Y_MAXIMO;
+        GUI application = new GUI(EjeXMaximo, EjeYMaximo);
 
-        //application.setDefaultCloseperation(JFrame.EXIT_ON_CLOSE);
+
         //Agentes no perdidos
         for (int i = 0; i < Constants.AGENTES_NO_PERDIDOS; i++) {
             tablero.anadirAgente(false);
@@ -71,11 +62,17 @@ public class Main {
                 agente.consensoDeCoordenadas();
                 agente.calcularVectorMovimiento();
                 tablero.actualizarPosiciones(agente);
+
             });
 
             application.update(application.getGraphics());
             try {
-                Thread.sleep(Constants.NUMERO_ESPERA);
+//                if (Tablero.getInstance().getEtapa() % 100 == 0) {
+//                    GUI application2 = new GUI(EjeXMaximo, EjeYMaximo);
+//                    application2.update(application.getGraphics());
+//                } else {
+                    Thread.sleep(Constants.NUMERO_ESPERA);
+              //  }
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -91,11 +88,6 @@ public class Main {
                 CentroFguraX = CentroFguraX + " ; " + String.format("%.2f", centroFigura.getX());
                 CentroFguraY = CentroFguraY + " ; " + String.format("%.2f", centroFigura.getY());
             }
-//        if (Tablero.getInstance().getEtapa()==500){
-//            System.out.println("REALIZACION-----------------------------------");
-//            Tablero.getInstance().eliminar(new Point(10.0,10.0));
-//
-//        }
         }
         writer.println("Etapa" + EtapasParaEstadisticas);
         writer.println("%realAgentesDentroFigura" + ListaPorCentajeAgentesDentroReal);
@@ -158,10 +150,7 @@ public class Main {
         Double error = 0.0;
         for (Agente agente : tablero.getTablero().keySet()) {
             if (!agente.getPerdido() && figura.isDentroFigura(agente.getPosicion())) {
-                error = error +
-                        Math.abs((agenteSujeto.getPosicion().distance(agente.getPosicion()) -
-                                tablero.getTablero().get(agenteSujeto).distance(tablero.getTablero().get(agente))
-                        ));
+                error = error + Math.abs((agenteSujeto.getPosicion().distance(agente.getPosicion()) - tablero.getTablero().get(agenteSujeto).distance(tablero.getTablero().get(agente))));
             }
         }
         if (tablero.getTablero().keySet().size() >= 1) {
@@ -189,10 +178,7 @@ public class Main {
         Double error = 0.0;
         for (Agente agente : tablero.getTablero().keySet()) {
             if (!agente.getPerdido()) {
-                error = error +
-                        Math.abs((agenteSujeto.getPosicion().distance(agente.getPosicion()) -
-                                tablero.getTablero().get(agenteSujeto).distance(tablero.getTablero().get(agente))
-                        ));
+                error = error + Math.abs((agenteSujeto.getPosicion().distance(agente.getPosicion()) - tablero.getTablero().get(agenteSujeto).distance(tablero.getTablero().get(agente))));
             }
         }
         if (tablero.getTablero().keySet().size() >= 1) {
@@ -219,10 +205,7 @@ public class Main {
         Double error = 0.0;
         for (Agente agente : tablero.agentesCercanosNoPerdidos(agenteSujeto)) {
             if (!agente.getPerdido() && tablero.agentesCercanosNoPerdidos(agenteSujeto).size() > 1) {
-                error = error +
-                        Math.abs((agenteSujeto.getPosicion().distance(agente.getPosicion()) -
-                                tablero.getTablero().get(agenteSujeto).distance(tablero.getTablero().get(agente))
-                        ));
+                error = error + Math.abs((agenteSujeto.getPosicion().distance(agente.getPosicion()) - tablero.getTablero().get(agenteSujeto).distance(tablero.getTablero().get(agente))));
             }
         }
         if (tablero.agentesCercanosNoPerdidos(agenteSujeto).size() >= 1) {

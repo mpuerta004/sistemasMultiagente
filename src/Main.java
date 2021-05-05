@@ -1,27 +1,30 @@
-import sistemamultiagente.*;
-
-import javax.swing.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import javax.swing.JFrame;
+
+import sistemamultiagente.*;
 
 public class Main {
 
     public static void main(String[] args) {
-        try {
-            String ruta = "C:\\Users\\Maite\\Desktop\\Sistemas Multiagente\\Pruebas_Finales\\prueba_BORRAR.csv";
-            PrintWriter writer = new PrintWriter(ruta, "UTF-8");
-            Main main = new Main();
-            for (int j = 0; j <10; j++) {
-                main.execute(writer);
-                Tablero.getInstance().reset();
-            }
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //try {
+           // String ruta = "C:/Users/Maite/Desktop\Sistemas Multiagente\Pruebas_Finales\prueba_BORRAR.csv";
+           // PrintWriter writer = new PrintWriter(ruta, "UTF-8");
+        Main main = new Main();
+            //for (int j = 0; j <10; j++) {
+        main.execute();
+        Tablero.getInstance().reset();
+
+           // }
+           // writer.close();
+        //} catch (IOException e) {
+        //    e.printStackTrace();
+        
+    //}
     }
 
-    private void execute(PrintWriter writer) {
+    private void execute() {
 
         String ListaPorCentajeAgentesDentroReal = "";
         String ListaPorCentajeAgentesDentro = "";
@@ -68,8 +71,8 @@ public class Main {
             application.update(application.getGraphics());
             try {
 //                if (Tablero.getInstance().getEtapa() % 100 == 0) {
-//                    GUI application2 = new GUI(EjeXMaximo, EjeYMaximo);
-//                    application2.update(application.getGraphics());
+//                GUI application2 = new GUI(EjeXMaximo, EjeYMaximo);
+//                application2.update(application.getGraphics());
 //                } else {
                     Thread.sleep(Constants.NUMERO_ESPERA);
               //  }
@@ -89,20 +92,20 @@ public class Main {
                 CentroFguraY = CentroFguraY + " ; " + String.format("%.2f", centroFigura.getY());
             }
         }
-        writer.println("Etapa" + EtapasParaEstadisticas);
-        writer.println("%realAgentesDentroFigura" + ListaPorCentajeAgentesDentroReal);
+        //writer.println("Etapa" + EtapasParaEstadisticas);
+        //writer.println("%realAgentesDentroFigura" + ListaPorCentajeAgentesDentroReal);
         System.out.println(ListaPorCentajeAgentesDentroReal);
-        writer.println("%AgenteCreenDentroFigura" + ListaPorCentajeAgentesDentro);
+        //writer.println("%AgenteCreenDentroFigura" + ListaPorCentajeAgentesDentro);
         System.out.println(ListaPorCentajeAgentesDentro);
-        writer.println("Sincronicacion entre agentes" + SincronizacionAgentes);
+        //writer.println("Sincronicacion entre agentes" + SincronizacionAgentes);
         System.out.println(SincronizacionAgentes);
-        writer.println("Sincronicacion LOCAL entre agentes" + SincronizacionLOCALAgentes);
+        //writer.println("Sincronicacion LOCAL entre agentes" + SincronizacionLOCALAgentes);
         System.out.println(SincronizacionLOCALAgentes);
-        writer.println("Sincronicacion GLOABL dentro figura" + SincronizacionDentroFigura);
+        //writer.println("Sincronicacion GLOABL dentro figura" + SincronizacionDentroFigura);
         System.out.println(SincronizacionDentroFigura);
-        writer.println("Centro figura X" + CentroFguraX);
+        //writer.println("Centro figura X" + CentroFguraX);
         System.out.println(CentroFguraX);
-        writer.println("Centro figura Y" + CentroFguraY);
+        //writer.println("Centro figura Y" + CentroFguraY);
         System.out.println(CentroFguraY);
 
 
